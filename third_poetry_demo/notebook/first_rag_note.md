@@ -96,6 +96,6 @@ print(answer)
 ## 【1.2】deepseek响应效果
 
 ```json
-content='根据提供的上下文，黑神话：悟空的游戏场景融合了中国的文化和自然地标。具体提到的取景地包括：\n\n*   重庆的大足石刻\n*   山西省的小西天、南禅寺、铁佛寺、广胜寺和鹳雀楼\n\n此外，上下文还提及游戏共有36个取景地，其中27个位于山西省。' additional_kwargs={'refusal': None} response_metadata={'token_usage': {'completion_tokens': 75, 'prompt_tokens': 1437, 'total_tokens': 1512, 'completion_tokens_details': None, 'prompt_tokens_details': {'audio_tokens': None, 'cached_tokens': 1408}, 'prompt_cache_hit_tokens': 1408, 'prompt_cache_miss_tokens': 29}, 'model_provider': 'deepseek', 'model_name': 'deepseek-chat', 'system_fingerprint': 'fp_eaab8d114b_prod0820_fp8_kvcache', 'id': '663aa899-2708-4b65-9555-b52ae654e691', 'finish_reason': 'stop', 'logprobs': None} id='lc_run--019c197c-bd06-7793-aaba-c3b0bc042141-0' tool_calls=[] invalid_tool_calls=[] usage_metadata={'input_tokens': 1437, 'output_tokens': 75, 'total_tokens': 1512, 'input_token_details': {'cache_read': 1408}, 'output_token_details': {}}
+content='根据提供的上下文，黑神话：悟空的游戏场景融合了中国的文化和自然地标。具体提到的取景地包括：\n\n*   重庆的大足石刻\n*   山西省的小西天、南禅寺、铁佛寺、广胜寺和鹳雀楼\n\n此外，上下文还提及游戏共有36个取景地，其中27个位于山西省。' 
 ```
 
