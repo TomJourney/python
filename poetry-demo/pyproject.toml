@@ -5,8 +5,13 @@ description = ""
 authors = [
     {name = "Tom",email = "tom@gmail.com"}
 ]
-requires-python = ">=3.14"
+requires-python = ">=3.14,<4.0"
 dependencies = [
+    "llama-index (>=0.14.13,<0.15.0)",
+    "llama-index-llms-deepseek (>=0.2.2,<0.3.0)",
+    "langchain-deepseek (>=1.0.1,<2.0.0)",
+    "langchain-community (>=0.4.1,<0.5.0)",
+    "beautifulsoup4 (>=4.14.3,<5.0.0)"
 ]
 
 packages = [
