@@ -62,5 +62,6 @@ llm = ChatDeepSeek(
     api_key=os.getenv("DEEPSEEK_API_KEY")
 )
 
+print('\n\n=======================\n大模型的回答内容如下：\n')
 answer = llm.invoke(prompt.format(question=question, context=joined_retrieved_docs))
 print(answer)
