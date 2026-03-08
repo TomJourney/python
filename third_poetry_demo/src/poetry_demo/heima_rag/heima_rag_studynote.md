@@ -927,11 +927,93 @@ poetry add langchain langchain-community langchain-ollama dashscope chromadb
 
 ---
 
+## 【3.3】rag介绍
 
+### 【3.3.1】rag定义
 
+1. 通用基础大模型存在的问题：
+   1. 问题1： 大模型的知识不是实时的，模型训练后不具备自动更新知识的能力，<font color=red>导致部分信息滞后</font>；
+   2. 问题2：<font color=red>大模型领域知识是缺乏的</font>，大模型训练数据来自互联网和开源数据集，无法覆盖特定领域或高度专业化的内部知识；
+   3. 问题3：<font color=red>幻觉问题</font>，大模型有时会在回答中生成看似合理但实际上是错误的信息；
+   4. 问题4：<font color=red>数据安全性</font>； 
+2. <font color=red>大模型存在的问题总结</font>：
+   1. 领域知识匮乏；
+   2. 过时； 
+   3. 幻觉； 
+   4. 安全；
 
+<br>
 
+---
 
+### 【3.3.2】rag解决什么问题
+
+1. <font color=red>rag：检索增强生成技术，解决大模型存在的问题； 利用检索外部文档提升生成结果质量</font>； 
+   1. 领域知识和私有数据；
+   2. 实时数据；
+   3. 减少生成不确定性； 
+   4. 增强数据安全； 
+2. rag检索增强生成技术：为大模型提供了从特定数据源检索到的信息，以此来修正和补充生成的答案。
+   1. <font color=red>可以总结为一个公式： RAG = 检索技术 + LLM提示 </font>;
+
+<br>
+
+---
+
+### 【3.3.3】理解rag的工作流程
+
+工作流图解：
+
+![image-20260308211439997](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/img/rag_workflowpng.png)
+
+rag标准流程：
+
+![image-20260308210933665](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/img/rag_intro.png)
+
+<br>
+
+---
+
+#### 【3.3.3.1】rag的工作原理
+
+1. rag分为2个流程：
+   1. 离线流程：知识库预处理；
+   2. 在线流程：用户问题与检索生成；
+
+![image-20260308211836568](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/img/rag_online_offline.png)
+
+<br>
+
+#### 【3.3.3.2】rag标准流程总结（非常重要）
+
+1. <font color=red>rag标准流程由索引index， 检索retrieve和生成generation三个核心阶段组成</font>。
+   1. 索引阶段：通过处理多种来源多种格式的文档提取其中文本，将其切分为标准长度的文本块（chunk），并进行嵌入向量化Embedding， 向量存储在向量数据库（vector database）中。
+      1. 加载文件；
+      2. 内容提取；
+      3. 文本分割，形成chunk
+      4. 文本向量化；
+      5. 存向量数据库；
+   2. 检索阶段： 用户输入的问题或查询（query）被转化为向量表示，通过相似度匹配从向量数据库中检索出最相关的文本块；
+      1. 问题或query向量化；
+      2. 在文本向量中匹配出与问句向量相似的top_k个； 
+   3. 生成阶段： 检索到的相关文本与原始查询（问题）共同构成提示词（prompt），输入大模型，生成精确且具备上下文关联的回答。
+      1. 匹配出的文本作为上下文和问题一起添加到prompt中；
+      2. 提交给大模型生成答案； 
+
+<br>
+
+---
+
+### 【3.3.4】rag总结
+
+1. 模型本质就是用户输入， 模型给出输出，用户能做到就是在输入上做功夫； 
+2. rag就是在向模型提问前基于已有的知识库或文档内容做检索，确保向模型提问的内容更加精准以及包含足够的信息量用以提供给O型；
+3. <font color=red>rag的核心工作是2个流程，包括离线流程-知识库预处理，在线流程-用户提问与检索生成</font>；
+
+4. <font color=red>rag的核心价值：</font>
+   1. 解决知识时效性问题：rag可以介入最新文档（如公式财报，政策文件），让模型输出与时俱进；
+   2. 降级模型幻觉：模型的回答依赖检索到的事实性资料，而非纯靠自身记忆，大幅减少编造信息的概率；
+   3. 无需重新训练模型：相比微调fine-turning， rag只需要更新知识库，成本更低，效率更高；
 
 
 
