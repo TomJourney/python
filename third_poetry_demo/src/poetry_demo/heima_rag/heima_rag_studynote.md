@@ -65,12 +65,147 @@
    1. 步骤1：下载Ollama；
    2. 步骤2：ollama run 模型名称；即可运行对应模型，并在命令行内做交互；
 2. ollama安装的是蒸馏模型；
-   1. <font color=red>蒸馏模型：可以理解为是大模型的学生，它学习了大模型的核心功能；因为标准大模型的运行对硬件性能要求很高； </font>
+   1. <font color=red>蒸馏模型：可以理解为是标准大模型的学生，它学习了标准大模型的核心功能，但没有标准大模型强大；因为标准大模型的运行对硬件性能要求很高； </font>
    2. <font color=red>为了满足在个人pc机上运行大模型，蒸馏模型应运而生</font>；
 
 ---
 
 ## 【1.6】代码调用ollama的本地模型
+
+1. 代码改动：
+   1. 步骤1：修改openAI中的baseUrl为 localhost:11434/v1
+   2. 步骤2：把模型修改为本地模型名称，如qwen3:4b
+
+```python
+client = OpenAI(
+    # 如果没有配置环境变量，请用阿里云百炼API Key替换：api_key="sk-xxx"
+    base_url="http://localhost:11434/v1",
+)
+
+messages = [{"role": "user", "content": "你是谁"}]
+completion = client.chat.completions.create(
+    model="qwen3:4b",  # 本地部署模型名称为qwen3:4b
+    messages=messages,
+    extra_body={"enable_thinking": True},
+    stream=True
+)
+```
+
+<br>
+
+---
+
+# 【2】Python OpenAI库基础使用
+
+## 【2.1】OpenAI库的基础使用
+
+1. OpenAI SDK（OpenAI 库）定义：是OpenAI官方推出的python sdk，核心作用是让开发者能够简单，高效调用OpenAI的各类API（如GPT聊天），无需手动处理HTTP请求，身份验证等细节；
+   1. 由于其发布较早且简单易用， 现如今许多模型服务商（如阿里云百炼平台）均兼容OpenAI SDK调用；
+2. OpenAI SDK的使用步骤：
+   1. 步骤1：获取客户端对象；
+   2. 步骤2：调用模型； 
+   3. 步骤3：处理结果；
+
+---
+
+### 【2.1.1】获取客户端对象
+
+```python
+from openai import OpenAI
+import os
+
+client = OpenAI(
+    # 如果没有配置环境变量，请用阿里云百炼API Key替换：api_key="sk-xxx"
+    api_key=os.getenv("OPENAI_API_KEY"),
+    base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",
+)
+```
+
+### 【2.1.2】调用模型
+
+```python
+messages = [{"role": "user", "content": "你是谁"}]
+completion = client.chat.completions.create(
+    model="qwen3-max",  # 您可以按需更换为其它深度思考模型
+    messages=messages,
+    extra_body={"enable_thinking": True},
+    stream=True
+)
+```
+
+1. 主要是2个参数：
+   1. model： 模型名称；
+   2. messages：提供给模型的消息：
+      1. 类型为list，可以包含多个字典消息；
+         1. 每个字典消息包含2个key，role-角色，content-内容； 
+      2. 角色列表：
+         1. system：设定助手的整体行为，角色和规则，为对话提供上下文框架（如指定助手身份，回答风格，核心要求），是全局的背景设置，影响后续所有交互；【例】 {"role":"system", "content":"你是一个python编程专家"}
+         2. assistant：代表AI助手的回答，可以在代码中设定；【例】 {"role":"assistant", "content":"我是一个python编程专家，请问有什么可以帮助你的吗"}
+         3. user角色：代表用户，发送问题，指令或需求；【例】{"role":"user", "content":"for循环输出1到5的数字"}
+
+### 【2.1.3】处理结果
+
+response变量：就是ChatCompletion对象，包含的信息如下所示。
+
+```python
+# 1 获取client对象
+from openai import OpenAI
+import os
+
+client = OpenAI(
+    # 如果没有配置环境变量，请用阿里云百炼API Key替换：api_key="sk-xxx"
+    api_key=os.getenv("OPENAI_API_KEY"),
+    base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",
+)
+
+# 2 调用模型
+response = client.chat.completions.create(
+    model="qwen3-max",
+    messages=[
+        {"role":"system", "content":"你是一个python编程专家，并且不说废话，简单回答"}
+        , {"role":"assistant", "content":"我是编程专家，并且话不多，你要问什么？"}
+        , {"role":"user", "content":"使用python代码，输出1-10数字"}
+    ]
+)
+
+# 3 处理结果
+print(response)
+print(response.choices[0].message.content)
+```
+
+【运行结果】
+
+````c++
+ChatCompletion(id='chatcmpl-f6344428-fe8e-9a2e-988f-3535ded6dd09', choices=[Choice(finish_reason='stop', index=0, logprobs=None, message=ChatCompletionMessage(content='```python\nfor i in range(1, 11):\n    print(i)\n```', refusal=None, role='assistant', annotations=None, audio=None, function_call=None, tool_calls=None))], created=1772930094, model='qwen3-max', object='chat.completion', service_tier=None, system_fingerprint=None, usage=CompletionUsage(completion_tokens=19, prompt_tokens=57, total_tokens=76, completion_tokens_details=None, prompt_tokens_details=PromptTokensDetails(audio_tokens=None, cached_tokens=0)))
+```python
+for i in range(1, 11):
+    print(i)
+```
+````
+
+### 【总结】使用OpenAI的3个流程
+
+1. 创建客户端对象（OpenAI类对象）
+2. 和模型对话，可以提供3个角色使用：
+   1. system: 设定模型的行为和规则；
+   2. assistant: 设定模型的回答，由用户设定；
+   3. user：用户的提问；
+
+3. 处理结果： response.choices[0].message.content
+
+---
+
+[]
+
+
+
+
+
+
+
+
+
+
 
 
 
