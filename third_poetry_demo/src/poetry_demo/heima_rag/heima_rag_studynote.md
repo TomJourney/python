@@ -240,7 +240,73 @@ for  i in range (1,  11):
 
 ---
 
-【2.3】
+## 【2.3】OpenAI库附带历史消息调用模型 
+
+1. 调用模型传入的参数messages，其要求的是list对象，即表明其支持非常多的消息在内；
+   1. 我们可以基于此，将历史消息填入，让模型知晓对话的上下文，更好的回答；
+   2. <font color=red>也就是说，可以在messages设定多个角色的语境上下文；</font>
+   3. <font color=red> messages: 就是历史消息列表 </font>；
+
+```python
+# 1 获取client对象
+from openai import OpenAI
+import os
+
+client = OpenAI(
+    # 如果没有配置环境变量，请用阿里云百炼API Key替换：api_key="sk-xxx"
+    api_key=os.getenv("OPENAI_API_KEY"),
+    base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",
+)
+
+# 2 调用模型
+response = client.chat.completions.create(
+    model="qwen3-max",
+    messages=[
+        {"role":"system", "content":"你是一个AI助理，简单回答"}
+        , {"role":"user", "content":"小明有2条宠物狗"}
+        , {"role":"assistant", "content":"好的"}
+        , {"role":"user", "content":"小红有3条宠物猫"}
+        , {"role":"assistant", "content":"好的"}
+        , {"role":"user", "content":"总共有几只宠物？"}
+    ],
+    stream=True # 开启流式输出
+)
+# messages 就是历史消息列表；
+
+# print(response.choices[0].message.content)
+# 3 处理流式的响应结果
+for chunk in response:
+    if chunk.choices[0].delta.content:
+        print(chunk.choices[0].delta.content, end="", flush=True) # end=" "表示每段以空格分隔； flush=True表示立刻刷新缓冲区
+
+# ========== 大模型回复内容：
+# 小明有2条狗，小红有3只猫，所以总共有：
+# 2 + 3 = **5只宠物**。
+```
+
+### 【小结】
+
+1. 在messages的list内，组织历史消息提供给模型； 
+2. 当前的历史消息是一次性的， 如果是生产系统可以将消息保存到文件，数据库等持久化工具内，需要的时候提取使用；
+3. 后续学习 Langchain库， 会学习短期记忆和长期记忆的使用方法；
+
+---
+
+# 【2】提示词工程（Prompt Engineering）
+
+## 【2.1】大模型prompt提示词工程指南 
+
+1. 提示词工程定义： Prompt engineering， 也称为in-context prompt，<font color=red>指在不更新模型权重的情况下如何与大模型交互以引导其行为以获得所需结果的方法 </font>；
+   1. 提示词工程：指包含与大语言模型交互和研发的各种技能和技术。提示工程在实现和大语言模型交互、对接，以及理解大语言模型能力方面都起着重要作用；
+
+2. 人工智能领域，prompt指的是用户给大模型发出的指令；
+   1. 如， 讲个笑话，用python编个贪吃蛇游戏，写封情书等；
+   2. 虽然看似简单，但实际上，prompt的设计对于模型的结果影响很大；
+   3. 因为如何设计prompt， 进而与模型更好的交互， 是研究人员必备的必不可少的技能（提示工程）；
+
+
+
+
 
 
 
