@@ -890,6 +890,43 @@ for question in questions:
 
 ---
 
+# 【3】rag开发
+
+## 【3.1】LangChain简介 
+
+1. langchain定义：为各种大模型实现通用接口，把大模型相关的组件链接在一起，简化大模型应用的开发难度，方便开发者快速开发复杂的大模型应用；
+2. <font color=red>langchain主要功能（提供开发API，如提示词优化的API）：</font>
+   1. Prompts：优化提示词（提示词工程）
+   2. models： 调用各类模型； 
+   3. History： 管理会话历史记录（记忆）
+   4. Indexes： 管理和分析各类文档；
+   5. Chains： 构建功能的执行链条； 
+   6. Agent： 构建智能体； 
+
+【补充】<font color=red>LangChain是后续学习RAG开发的主力框架</font>；
+
+<br>
+
+---
+
+## 【3.2】LangChain环境部署
+
+1. langchain安装：
+   1. langchain：核心包；
+   2. langchain-community： 社区支持包，提供更多的第三方模型调用（我们用的阿里云千问模型就需要这个包）
+   3. langchain-ollama： ollama支持包，支持调用ollama托管部署的本地模型； 
+   4. dashscope：阿里云通义千问的python sdk
+   5. chromadb： 轻量级向量数据库；
+2. 执行命令
+
+```c++
+poetry add langchain langchain-community langchain-ollama dashscope chromadb
+```
+
+<br>
+
+---
+
 
 
 
