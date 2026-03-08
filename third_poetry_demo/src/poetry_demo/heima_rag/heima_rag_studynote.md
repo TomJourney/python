@@ -541,6 +541,85 @@ for q in questions:
 
 ## 【2.4】提示词工程-json数据格式
 
+1. json对象与python对象对比：
+   1. json对象 ：对应于python字典；
+   2. json数组： python列表中含有多个字典；
+   3. json在python中，就是字典和列表嵌套字典的字符串表现形式；
+
+<br>
+
+---
+
+### 【2.4.1】python中使用json
+
+1. python中使用json主要完成：
+   1. <font color=red>（正向转换）python字典及列表：转换为json字符串</font>；
+   2. <font color=red>（反向转换）json字符串：转换为python字典或列表</font>； 
+2. 主要使用python内置的json库：
+   1. json.dumps(字段或列表，ensure_ascii=False)： 将字典或列表转换为json字符串； 
+      1. ensure_ascii： 确保中文能够正常显示； 
+      2. 返回值： json字符串； 
+   2. json.loads(json字符串) : 将json字符串转换为python字典或列表； 
+      1. 返回值： python字典 或 puthon列表； 
+
+<br>
+
+---
+
+### 【2.4.2】代码实现python字典与json的转换 
+
+【】
+
+```python
+# python字典与json相互转换
+import json
+
+dict = {
+    "name":"张三",
+    "age":"11",
+    "gender":"男"
+}
+
+print("\n========== python字典或字典列表转为json对象或json数组 \n")
+# 转为json字符串
+json_str = json.dumps(dict, ensure_ascii=False)
+print(json_str) # {"name": "张三", "age": "11", "gender": "男"}
+
+# 【2】 python字典列表转为json字符串
+arr_dict = [
+    {
+    "name":"张三",
+    "age":"3",
+    "gender":"男"
+    },
+    {
+    "name":"李四",
+    "age":"4",
+    "gender":"女"
+    }
+]
+# 转为json数组
+json_arr = json.dumps(arr_dict, ensure_ascii=False)
+print(json_arr)
+# [{"name": "张三", "age": "3", "gender": "男"}, {"name": "李四", "age": "4", "gender": "女"}]
+
+# ========== json对象或数组转为python字典或列表
+print("\n\n==========json对象或数组转为python字典或列表\n")
+temp_json_str = '{"name": "张三", "age": "11", "gender": "男"}'
+temp_json_arr = '[{"name": "张三", "age": "3", "gender": "男"}, {"name": "李四", "age": "4", "gender": "女"}]'
+
+# 转为字典或数组
+temp_dict = json.loads(temp_json_str)
+temp_dict_arr = json.loads(temp_json_arr)
+
+print(temp_dict, type(temp_dict))
+# {'name': '张三', 'age': '11', 'gender': '男'} <class 'dict'>
+print(temp_dict_arr, type(temp_dict_arr))
+# [{'name': '张三', 'age': '3', 'gender': '男'}, {'name': '李四', 'age': '4', 'gender': '女'}] <class 'list'>
+```
+
+
+
 
 
 
