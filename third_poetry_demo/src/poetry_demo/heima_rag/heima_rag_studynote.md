@@ -1220,9 +1220,32 @@ print(result)
    1. invoke方法：一次性返回完整结果； 
    2. stream方法： 逐段返回结果， 流式输出
 
+【0307_langchain_stream_call_llm_remote.py】langchain流式调用大模型
 
+```python
+# 调用大模型
+from langchain_community.llms.tongyi import Tongyi
 
+# qwen3-max是聊天模型， qwen-max是大语言模型
+model = Tongyi(model="qwen-max")
 
+# 调用 stream 向模型提问
+result = model.stream(input="你是谁呀，能做什么？")
+for chunk in result:
+    print(chunk, end="", flush=True) # end表示每段分隔符为空串， flush=True表示立即显示
+
+# 您好，我是Qwen，全名通义千问，是阿里云自主研发的超大规模语言模型。...... 
+```
+
+<br>
+
+### 【3.7.1】总结
+
+1. langchain有2个方法调用大模型：
+   1. invoke：一次性返回完整结果； 
+   2. stream，逐段流式输出结果； 
+2. 这两个方法是新版langchain中基于Runnable接口的通用核心方法；
+   1. <font color=red>绝大多数组件（如提示词模版，链，向量检索，工具调用等，后续学习）都支持这2个方法，这也是langchain设计的核心统一范式</font>； 
 
 
 
