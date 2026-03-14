@@ -1483,6 +1483,20 @@ print(model.embed_documents(["我喜欢你", "我稀饭你", "晚上吃啥"]))
 
 ```
 
+<br>
+
+---
+
+### 【3.10.1】langchain调用3类模型的使用总结
+
+![langchain_call_model_conclusion](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/img/langchain_call_model_conclusion.png)
+
+<br>
+
+---
+
+## 【3.11】langchain通用提示词模版
+
 
 
 
