@@ -1163,7 +1163,84 @@ if __name__ == '__main__':
 
 ---
 
-【3.6】
+## 【3.6】langchain调用大模型
+
+1. langchain框架回顾：集成调用各种大模型的精简统一接口；
+2. <font color=red>langchain目前支持3种类型的模型： 大模型LLMs，聊天模型Chat Models， 嵌入模型Embeddings Models</font>；
+   1. 大模型：技术范畴统称；指基于大参数量，海量文本训练的Transformer架构模型，核心能力是理解和生成自然语言，<font color=red>主要服务于文本生成场景</font>；
+   2. 聊天模型：应用范畴统称； 指转为对话场景优化的大模型，核心能力是模拟人类对话的轮次交互，<font color=red>主要服务于聊天场景</font>；
+   3. 文本嵌入模型：文本嵌入模型接受文本作为输入，得到文本的向量；
+
+3. LangChain支持的3类模型，它们是使用场景不同，输入和输出不同，开发者需要根据项目做对应选择；
+   1. 补充：我们所用的阿里云千问系列主要来自于  langchain_community包； 
+
+<br>
+
+---
+
+### 【3.6.1】langchain调用大模型示例
+
+【0306_call_llm_remote.py】调用阿里云千问模型
+
+```python
+# 调用大模型
+from langchain_community.llms.tongyi import Tongyi
+
+# qwen3-max是聊天模型， qwen-max是大语言模型
+model = Tongyi(model="qwen-max")
+
+# 调用invoke向模型提问
+result = model.invoke(input="你是谁呀，能做什么？")
+print(result)
+```
+
+<br>
+
+【0306_call_ollama_local.py】
+
+```python
+# 调用大模型-ollama本地模型
+from langchain_ollama import OllamaLLM
+
+# qwen3-max是聊天模型， qwen-max是大语言模型
+model = OllamaLLM(model="qwen3:4b")
+
+# 调用invoke向模型提问
+result = model.invoke(input="你是谁呀，能做什么？")
+print(result)
+```
+
+<br>
+
+---
+
+## 【3.7】langchain模型的流式输出
+
+1. 如果需要流式输出结果，需要将模型的invoke方法修改为stream方法；
+   1. invoke方法：一次性返回完整结果； 
+   2. stream方法： 逐段返回结果， 流式输出
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
