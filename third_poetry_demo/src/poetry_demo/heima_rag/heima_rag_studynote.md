@@ -1454,7 +1454,38 @@ messages = [
 
 <br>
 
---
+---
+
+## 【3.10】langchain调用嵌入模型
+
+1. <font color=red>嵌入模型Embeddings Model的特点</font>：将字符串作为输入，返回一个浮点数的列表（向量）。在NLP中，Embedding的作用就是将数据进行文本向量化； 
+
+【0310_langchain_call_embedding_modles.py】
+
+```python
+# 调用嵌入模型
+
+from langchain_community.embeddings import DashScopeEmbeddings
+
+# 创建模型对象， 不传入model，默认使用的是 text-embeddings-v1
+model = DashScopeEmbeddings()
+
+# 不用invoke ， stream
+# 使用 embed_query, embed_documents
+print(model.embed_query("我喜欢你"))
+print(model.embed_documents(["我喜欢你", "我稀饭你", "晚上吃啥"]))
+```
+
+【LLM回复】
+
+```c++
+[-3.02587890625, 3.3109374046325684, 4.410546779632568, 0.4593261778354645, -4.43798828125, 0.844921886920929, ...]
+
+```
+
+
+
+
 
 
 
