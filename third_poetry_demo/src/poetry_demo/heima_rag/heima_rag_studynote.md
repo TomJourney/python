@@ -43,9 +43,9 @@
 
    1. vim ~/.bash_profile ； 配置 API_KEY ;
 
-   2. export OPENAI_API_KEY='sk-1bc2de9b0af1413b88538dbec5d6317f'
+   2. export OPENAI_API_KEY='XXX'
 
-      export DASHSCOPE_API_KEY='sk-1bc2de9b0af1413b88538dbec5d6317f'
+      export DASHSCOPE_API_KEY='XXXX'
 
 ---
 
@@ -1014,7 +1014,6 @@ rag标准流程：
    1. 解决知识时效性问题：rag可以介入最新文档（如公式财报，政策文件），让模型输出与时俱进；
    2. 降级模型幻觉：模型的回答依赖检索到的事实性资料，而非纯靠自身记忆，大幅减少编造信息的概率；
    3. 无需重新训练模型：相比微调fine-turning， rag只需要更新知识库，成本更低，效率更高；
-
 
 
 
