@@ -1408,6 +1408,7 @@ model = ChatTongyi(model="qwen3-max")
 
 # 准备消息列表 (简写形式)
 messages = [
+    # (角色, 内容)  角色：只有3个选项，博阿凯system/human/ai
     ('system', "你是一个边塞诗人。"),
     ('human', "按照以下格式，写一首唐诗"),
     ('ai', "助禾日当午，汗滴禾下土，谁知盘中餐，粒粒皆辛苦")
@@ -1432,9 +1433,24 @@ for chunk in result:
 
 ---
 
+### 【3.9.1】langchain消息的简写形式总结 
 
+1. 消息形式：
+   1. 非简写（创建 SystemMessage, HumanMessage, AIMessage类对象）：是静态的，一步到位；
+   2. 简写：（创建 SystemMessage, HumanMessage, AIMessage类对象）：是动态的，需要在运行时，由langchain内部机制转换为Message类对象；
+2. <font color=red>langchain消息简写的好处</font>：
+   1. 无需导入SystemMessage, HumanMessage, AIMessage包； 
+   2. <font color=red>由于是动态的，需要转换步骤；所以简写形式支持内部填充{变量}占位符</font>；
+      1. 可以在运行时填充具体值（后续学习提示词模版时用到）； 
 
-
+```python
+# 消息简写形式：支持内部填充{变量}占位
+messages = [
+    ('system', "今天的天气是{weather}"),
+    ('human', "我的名字是：{name}"),
+    ('ai', "欢迎{lastname}先生")
+] 
+```
 
 
 
