@@ -1247,13 +1247,140 @@ for chunk in result:
 2. 这两个方法是新版langchain中基于Runnable接口的通用核心方法；
    1. <font color=red>绝大多数组件（如提示词模版，链，向量检索，工具调用等，后续学习）都支持这2个方法，这也是langchain设计的核心统一范式</font>； 
 
+<br>
 
+---
 
+## 【3.8】langchain调用聊天模型
 
+1. 聊天消息包含下面几种类型，使用时需要按照约定传入合适的值：
+   1. AIMessage：AI输出的消息，可以是针对问题的答案。<font color=red>（openai库中的assistant角色）</font>
+   2. HumanMessage：人类消息就是用户信息，由人给出的信息发送给LLMs的提示信息，比如“实现一个快速排序方法”。<font color=red>（openai库中的user角色）</font>
+   3. SystemMessage：可以用于指定模型具体所处的环境和背景，如角色扮演等。你可以在这里给出具体的指示，比如“作为一个代码专家”，或者“返回json格式”。<font color=red>（openai库中的system角色）</font>
 
+<br>
 
+---
 
+### 【3.8.1】使用不同角色调用聊天模型的python实现
 
+【0308_langchain_call_chat_modles.py】调用聊天模型
+
+```python
+# 调用聊天模型
+
+from langchain_community.chat_models.tongyi import ChatTongyi
+from langchain_core.messages import AIMessage, SystemMessage, HumanMessage
+
+# 得到模型对象，qwen3-max就是聊天模型
+model = ChatTongyi(model="qwen3-max")
+
+# 准备消息列表
+messages = [
+    SystemMessage(content="你是一个边塞诗人。"), # 或有
+    HumanMessage(content="写一首唐诗")
+]
+
+# 调用stream流式执行
+result = model.stream(input=messages)
+
+# for循环迭代打印输出，通过.content来获取内容
+for chunk in result:
+    print(chunk.content, end="", flush=True)
+```
+
+【LLM回复结果】
+
+```c++
+《塞上曲》
+朔风卷地裂寒旌，铁甲凝霜夜柝惊。
+孤城落日驼铃碎，大漠连天雁字横。
+血浸征袍埋骨处，春生野草牧羝声。
+何须更觅封侯印，一剑能消万古兵。
+```
+
+<br>
+
+---
+
+【0308_langchain_call_chat_modles.py】 调用聊天模型
+
+```python
+# 调用聊天模型
+
+from langchain_community.chat_models.tongyi import ChatTongyi
+from langchain_core.messages import AIMessage, SystemMessage, HumanMessage
+
+# 得到模型对象，qwen3-max就是聊天模型
+model = ChatTongyi(model="qwen3-max")
+
+# 准备消息列表
+messages = [
+    SystemMessage(content="你是一个边塞诗人。"), # 或有
+    HumanMessage(content="按照以下格式，写一首唐诗"),
+    AIMessage(content="助禾日当午，汗滴禾下土，谁知盘中餐，粒粒皆辛苦"),  # 给出示例
+]
+
+# 调用stream流式执行
+result = model.stream(input=messages)
+
+# for循环迭代打印输出，通过.content来获取内容
+for chunk in result:
+    print(chunk.content, end="", flush=True)
+```
+
+【LLM回复】
+
+```c++
+戍楼月如钩，霜刃凝寒秋。  
+谁怜征人骨，夜夜枕戈愁。
+```
+
+<br>
+
+---
+
+### 【3.8.2】使用不同角色调用本地聊天模型的python实现
+
+【0308_langchain_call_chat_modles_local.py】调用本地ollama部署的模型
+
+```python
+# 调用聊天模型
+
+from langchain_ollama import ChatOllama
+from langchain_core.messages import AIMessage, SystemMessage, HumanMessage
+
+# 得到模型对象，qwen3-max就是聊天模型
+model = ChatOllama(model="qwen3:4b")
+
+# 准备消息列表
+messages = [
+    SystemMessage(content="你是一个边塞诗人。"), # 或有
+    HumanMessage(content="按照以下格式，写一首唐诗"),
+    AIMessage(content="助禾日当午，汗滴禾下土，谁知盘中餐，粒粒皆辛苦"),  # 给出示例
+]
+
+# 调用stream流式执行
+result = model.stream(input=messages)
+
+# for循环迭代打印输出，通过.content来获取内容
+for chunk in result:
+    print(chunk.content, end="", flush=True)
+```
+
+【LLM回复结果】
+
+```c++
+《塞上曲》
+朔风卷地白草折，胡马嘶风月似钩。
+将军夜猎胡尘起，铁甲寒光泪满楼。
+```
+
+<br>
+
+---
+
+## 【3.9】langchain消息的简写形式
 
 
 
