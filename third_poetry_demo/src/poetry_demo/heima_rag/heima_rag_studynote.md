@@ -1643,6 +1643,32 @@ print(prompt_text.to_string())
 
 ## 【3.13】langchain框架模板类的format和invoke方法
 
+1. PropmptTemplate, FewShotPromptTemplate, ChatPromptTemplate 都拥有 format 和 invoke 这2类方法； 
+2. 类继承结构如下：
+
+![prompt_template](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/img/prompt_template.png)
+
+3. format与invoke的区别：
+
+| 区别   | format                               | invoke                                                       |
+| ------ | ------------------------------------ | ------------------------------------------------------------ |
+| 功能   | 纯字符串替换，解析占位符，生成提示词 | Runnable 接口标准方法，解析占位符生成提示词                  |
+| 返回值 | 字符串                               | PromptValue类对象<br>（需要使用 .to_string()方法转为字符串） |
+| 传参   | .format(k=v, k=v, ...)               | .invoke( {{ "k":v, "k":"v", ...... })                        |
+| 解析   | 支持解析 {} 占位符                   | 支持解析 {} 占位符 和 MessagePlaceHolder <br> 结构化占位符 ； |
+
+<br>
+
+---
+
+### 【3.13.1】format与invoke方法代码实现
+
+
+
+
+
+
+
 
 
 
