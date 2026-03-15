@@ -1497,6 +1497,99 @@ print(model.embed_documents(["我喜欢你", "我稀饭你", "晚上吃啥"]))
 
 ## 【3.11】langchain通用提示词模版
 
+### 【3.11.1】通用提示词模版
+
+1. 提示词优化在模型应用中非常重要，langchain提供了PromptTemplate类，用来协助优化提示词；
+2. <font color=red>PromptTemplate表示提示词模版</font>，可以构建一个自定义的基础提示词模版，支持变量的注入，最终生成所需的提示词；
+
+### 【3.11.2】代码实现
+
+【0311_langchain_prompt_template.py】langchain提示词模版实践
+
+```python
+# langchain通用提示词模版
+from langchain_community.llms.tongyi import Tongyi
+from langchain_core.prompts import PromptTemplate
+
+# 提示词模版类PromptTemplate，是Runnable接口的实现类，它可以加入到langchain中的链条
+prompt_template = PromptTemplate.from_template(
+    "我的邻居姓{lastname}， 刚生了{gender}, 你帮我起个名字，简单回答。"
+)
+
+# 调用 .format方法注入信息即可
+prompt_text = prompt_template.format(lastname="张", gender="女儿")
+print("prompt_text = " + prompt_text)
+# 我的邻居姓张， 刚生了女儿, 你帮我起个名字，简单回答。
+
+model = Tongyi(model="qwen-max")
+result = model.invoke(input=prompt_text)
+print(result) # 张家欣
+```
+
+<br>
+
+【0311_langchain_chain_call_llm.py】<font color=red> langchain链对象</font>调用大模型
+
+```python
+# langchain通用提示词模版
+from langchain_community.llms.tongyi import Tongyi
+from langchain_core.prompts import PromptTemplate
+
+# 提示词模版类PromptTemplate，是Runnable接口的实现类，它可以加入到langchain中的链条
+# zero-shot 零样本学习
+prompt_template = PromptTemplate.from_template(
+    "我的邻居姓{lastname}， 刚生了{gender}, 你帮我起个名字，简单回答。"
+)
+
+model = Tongyi(model="qwen-max")
+
+# 创建链对象
+chain = prompt_template | model
+result = chain.invoke(input={"lastname":"张", "gender":"女儿"})
+print(result)
+# 张婉儿
+```
+
+<br>
+
+### 【3.11.3】总结
+
+1. 基于PromptTemplate类可以得到提示词模版，支持基于模板注入变量得到最终提示词； 
+   1. zero-shot思想下， 可以基于PromptTemplate 直接完成；
+   2. few-shot思想下， 需要更换为 FewShotPromptTemplate ；
+2. <font color=red>使用PromptTemplate类的优点（为什么不使用拼接或格式化方式构建提示词）</font>
+   1. 适应Template模板构建提示词，在大工程中更容易做标准化模版； 
+   2. Template模板类，支持langchain框架的链式调用（Runnable接口）
+      1. PromptTemplate  （zero-shot，零样本学习）
+      2. FewShotPromptTemplate （few-shot， 少样本学习）
+      3. ChatPromptTemplate （聊天提示词模版）
+
+<br>
+
+---
+
+## 【3.12】langchain框架FewShotPromptTemplate的使用
+
+### 【3.12.1】
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
