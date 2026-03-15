@@ -1776,16 +1776,29 @@ print(result.content)
 
 ## 【3.15】langchain框架chain链的基础使用
 
-1. 链定义：把组件串联，上一个组件的输出，作为下一个组件的输入（类似于linux管道命令），这是langchain链（尤其是 | 管道链）的核心工作原理，这也是链式调用的核心价值；
+1. <font color=red>链定义：把组件串联，上一个组件的输出，作为下一个组件的输入（类似于linux管道命令），这是langchain链（尤其是 | 管道链）的核心工作原理，这也是链式调用的核心价值</font>；
 2. 实现数据的自动化流转与组件的协同工作，代码如下： chain = prompt_template | model 
 3. 核心前提： 即Runnable子类对象才能入链（以及Callable，Mapping接口子类对象也可以加入）；
 4. 我们目前所学的组件，均是Runnable接口的子类，继承关系如下；
 
 ![chain_runnable_class_extend](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/img/chain_runnable_class_extend.png)
 
+<br>
 
+---
 
+### 【3.15.1】chain链 
 
+1. 通过 |(符号) 链接提示词模板对象和模型对象；
+2. 返回值chain对象是RunnableSerializable对象；
+   1. 是Runnable接口的直接子类； 
+   2. 也是绝大多数组件的父类；
+3. 通过invoke或stream进行阻塞执行或流式执行； 
+4. 组成的链在执行上有：上一个组件的输出作为下一个组件的输入的特性； 
+
+![chain_steps](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/img/chain_steps.png)
+
+【】代码实现
 
 
 
