@@ -1697,11 +1697,91 @@ print(type(result2)) # <class 'langchain_core.prompt_values.StringPromptValue'>
 
 ---
 
+## 【3.14】ChatPromptTemplate（聊天提示词模版）的使用
 
+1. PromptTemplate回顾：
+   1. PromptTemplate： 通用提示词模板， 支持动态注入信息；
+   2. FewShotPromptTemplate： 支持基于模板注入任意数量的示例信息； 
+2. <font color=red>ChatPromptTemplate： 支持注入任意数量的历史会话信息</font>；
 
+3. 通过from_messages方法，从列表中获取多轮次会话作为聊天的基础模板 ；
+   1. 补充：前面 PromptTemplate类用的 from_template 仅能够接入一条消息，而 from_messages 可以接入一个list的消息；
 
+<br>
 
+4. ChatPromptTemplate优点： 支持动态注入；
+   1. 历史会话信息并不是静态的（固定的），而是随着对话的进行不停积攒，即动态的；
+      1. 所以历史会话信息需要支持动态注入；
+   2. MessagePlaceHolder作为占位符：提供history作为占位的key；
+   3. <font color=red>基于invoke动态注入历史会话记录， 必须是invoke，format无法注入</font>；
 
+### 【3.14.1】聊天提示词模版代码实现
+
+【0314_langchain_chat_prompt_template_use.py】聊天提示词模版代码实现
+
+```python
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+from langchain_community.chat_models.tongyi import ChatTongyi
+
+# 创建聊天提示词模版
+chat_prompt_template = ChatPromptTemplate.from_messages(
+    [
+        ("system", "你是一个边塞诗人，可以作诗"),
+        MessagesPlaceholder("history"),
+        ("human", "请再来一首唐诗"),
+
+    ]
+)
+
+history_data = [
+    ("human", "你来写一首唐诗"),
+    ("ai", "床前明月光，疑是地上霜，举头望明月，低头思故乡"),
+    ("human", "好诗再来一首"),
+    ("ai", "锄禾日当午，汗滴禾下土，谁知盘中餐，粒粒皆辛苦")
+]
+
+# StringPromptValue  to_string()
+prompt_text = chat_prompt_template.invoke({"history": history_data}).to_string()
+print(prompt_text)
+# System: 你是一个边塞诗人，可以作诗
+# Human: 你来写一首唐诗
+# AI: 床前明月光，疑是地上霜，举头望明月，低头思故乡
+# Human: 好诗再来一首
+# AI: 锄禾日当午，汗滴禾下土，谁知盘中餐，粒粒皆辛苦
+# Human: 请再来一首唐诗
+
+# 请求大模型
+model = ChatTongyi(model="qwen3-max")
+result = model.invoke(prompt_text)
+print("====== 大模型回复内容：\n ")
+print(result)
+print(type(result))
+
+# <class 'langchain_core.messages.ai.AIMessage'>
+
+# 获取llm回复的字符串
+print("====== 大模型回复的字符串类型的结果 \n")
+print(result.content)
+# 黄沙百战穿金甲，
+# 不破楼兰终不还。
+# 孤城落日连烽火，
+# 铁马西风卷玉关。
+#
+# ——边塞戍卒志
+```
+
+<br>
+
+---
+
+## 【3.15】langchain框架chain链的基础使用
+
+1. 链定义：把组件串联，上一个组件的输出，作为下一个组件的输入（类似于linux管道命令），这是langchain链（尤其是 | 管道链）的核心工作原理，这也是链式调用的核心价值；
+2. 实现数据的自动化流转与组件的协同工作，代码如下： chain = prompt_template | model 
+3. 核心前提： 即Runnable子类对象才能入链（以及Callable，Mapping接口子类对象也可以加入）；
+4. 我们目前所学的组件，均是Runnable接口的子类，继承关系如下；
+
+![chain_runnable_class_extend](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/img/chain_runnable_class_extend.png)
 
 
 
