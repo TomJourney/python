@@ -1934,7 +1934,11 @@ if __name__ == "__main__":
 
 ---
 
-【3.17】
+## 【3.17】langchain框架的Runnable接口 
+
+### 【3.17.1】Runnable接口 
+
+
 
 
 
