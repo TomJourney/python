@@ -1854,6 +1854,42 @@ for chunk in chain.stream({"history":history_data}):
    3. 形成的链式 RunnableSerializable 对象（Runnable接口子类）
    4. 可以通过链调用invoke或stream触发整个链条的执行；  
 
+<br>
+
+---
+
+## 【3.16】或运算符的重写
+
+### 【3.16.1】运算符重载 
+
+1. 前文代码中： chain = chat_prompt_template | model 
+   1. <font color=red>在语法上使用了 "|" 运算符的重写</font>； 
+
+2. 在python中，运算符（如 “+”， “|”）的行为由类的魔法方法决定。 例如：
+
+```python
+a + b 的本质调用是 a.__add__(b)
+a | b 的本质调用是 a.__or__(b)
+```
+
+只需要自行实现类的 \_ _or\_ _方法， 即可对 "|" 符号的功能进行重写； 
+
+3. 示例：
+
+```python
+让 a | b | c 的代码得到一个自定义的类对象（类似列表即 [a, b, c]）
+调用run方法依次输出 a, b, c 
+我们需要重写 | 即 __or__ 方法
+```
+
+![operator_overload](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/img/operator_overload.png)
+
+<br>
+
+---
+
+
+
 
 
 
