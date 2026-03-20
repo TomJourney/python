@@ -1776,7 +1776,7 @@ print(result.content)
 
 ## 【3.15】langchain框架chain链的基础使用
 
-1. <font color=red>链定义：把组件串联，上一个组件的输出，作为下一个组件的输入（类似于linux管道命令），这是langchain链（尤其是 | 管道链）的核心工作原理，这也是链式调用的核心价值</font>；
+1. <font color=red>链定义：把组件串联，上一个组件的输出，作为下一个组件的输入（类似于linux管道命令），这是langchain链（尤其是 | 管道链）的核心工作原理，这也是链式调用的核心价值</font>； 
 2. 实现数据的自动化流转与组件的协同工作，代码如下： chain = prompt_template | model 
 3. 核心前提： 即Runnable子类对象才能入链（以及Callable，Mapping接口子类对象也可以加入）；
 4. 我们目前所学的组件，均是Runnable接口的子类，继承关系如下；
@@ -1848,10 +1848,10 @@ for chunk in chain.stream({"history":history_data}):
 
 ### 【3.15.2】langchain链总结
 
-1. <font color=red>langchain中链式一种将各个组件串联在一起，按顺序执行，前一个组件的输出作为下一个组件的输入</font>；
+1. <font color=red>langchain中链是一种将各个组件串联在一起，按顺序执行，前一个组件的输出作为下一个组件的输入</font>；
    1. 可以通过 "|" 符号来让各个组件形成链； 
    2. 成链的各个组件，需要Runnable接口的子类； 
-   3. 形成的链式 RunnableSerializable 对象（Runnable接口子类）
+   3. 形成的链是 RunnableSerializable 对象（Runnable接口子类）
    4. 可以通过链调用invoke或stream触发整个链条的执行；  
 
 <br>
@@ -1934,9 +1934,80 @@ if __name__ == "__main__":
 
 ---
 
-## 【3.17】langchain框架的Runnable接口 
+## 【3.17】简单理解langchain框架的Runnable接口 
 
 ### 【3.17.1】Runnable接口 
+
+1. <font color=red>langchain链的基础架构</font>：
+   1. langchain中绝大多数核心组件都继承Runnable抽象基类（位于 langchain_core.runnables.base）
+   2. 代码： ``` chain = prompt | model```
+   3. chain变量是 RunnableSequence(RunnableSerilizable子类)类型， 而得到这个类型的原因就是 Runnable基类内部对 \_ \_or\_ _ 魔术方法的改写； 
+   4. 同时，在后面继续使用 "|" 添加新的组件，依旧会得到 RunnableSequence， 这就是langchain链的基础架构；
+
+【langchain框架#Runnable#_ _or_ _方法源码】
+
+```python
+def __or__(
+    self,
+    other: Runnable[Any, Other]
+    | Callable[[Iterator[Any]], Iterator[Other]]
+    | Callable[[AsyncIterator[Any]], AsyncIterator[Other]]
+    | Callable[[Any], Other]
+    | Mapping[str, Runnable[Any, Other] | Callable[[Any], Other] | Any],
+) -> RunnableSerializable[Input, Other]:
+    """Runnable "or" operator.
+
+    Compose this `Runnable` with another object to create a
+    `RunnableSequence`.
+
+    Args:
+        other: Another `Runnable` or a `Runnable`-like object.
+
+    Returns:
+        A new `Runnable`.
+    """
+    return RunnableSequence(self, coerce_to_runnable(other))
+```
+
+【langchain类型回顾】
+
+```python
+from langchain_core.prompts import PromptTemplate
+from langchain_community.llms.tongyi import Tongyi
+
+prompt = PromptTemplate.from_template("你是一个AI助手")
+model = Tongyi(model="qwen3-max")
+
+chain = prompt | model
+print(type(chain))
+# <class 'langchain_core.runnables.base.RunnableSequence'>
+```
+
+<br>
+
+---
+
+## 【3.18】StrOutputParser字符串输出解析器
+
+### 【3.18.1】碰到的问题
+
+1. 有如下代码，把第1次llm返回的结果，再送入llm，但报错：
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
