@@ -1993,6 +1993,118 @@ print(type(chain))
 
 1. 有如下代码，把第1次llm返回的结果，再送入llm，但报错：
 
+```python
+from langchain_core.prompts import PromptTemplate
+from langchain_community.chat_models.tongyi import ChatTongyi
+
+model = ChatTongyi(model="qwen3-max")
+prompt = PromptTemplate.from_template(
+    "我邻居姓{lastname}， 刚生了{gender}， 请起名，仅告知名字无需其他内容"
+)
+
+chain = prompt | model | model
+response = chain.invoke({"lastname":"张", "gender":"女儿"})
+# 报错：ValueError: Invalid input type <class 'langchain_core.messages.ai.AIMessage'>. Must be a PromptValue, str, or list of BaseMessages.
+
+print(response.content)
+```
+
+【错误根因分析】
+
+- prompt的结果是 PromptValue类型，输入给了model 
+- model的输出结果是 AIMessage ，再送入第2个model就不符号要求了；
+
+2. 模型（ChatTongyi）源码中关于invoke方法明确指定了input的类型：
+
+【langchain框架#Runnable#invoke方法源码】
+
+```python
+def invoke(
+    self,
+    input: Input,
+    config: RunnableConfig | None = None,
+    **kwargs: Any,
+) -> Output:
+```
+
+<br>
+
+<font color=red>【解决方法】 使用StrOutputParser-字符串输出解析器</font> ;
+
+需要做类型转换， 可以借助 langchain内置的解析器：StrOutputParser 字符串输出解析器； 
+
+![str_output_parser](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/img/str_output_parser.png)
+
+<br>
+
+---
+
+### 【3.18.2】StrOutputParser字符串输出解析器 
+
+1. StrOutputParser是langchain内置的简单字符串解析器；
+   1. 可以将 AIMessage解析为简单的字符串，符合模型invoke方法要求（可传入字符串，不接受AIMessage类型）
+   2. 是Runnable接口的子类（可以加入链）
+
+![str_output_parser_solution](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/img/str_output_parser_solution.png)
+
+【代码实现】使用StrOutputParser解析模型输出
+
+```python
+from langchain_core.prompts import PromptTemplate
+from langchain_community.chat_models.tongyi import ChatTongyi
+from langchain_core.output_parsers import StrOutputParser
+
+model = ChatTongyi(model="qwen3-max")
+prompt = PromptTemplate.from_template(
+    "我邻居姓{lastname}， 刚生了{gender}， 请起名，仅告知名字无需其他内容"
+)
+
+# chain = prompt | model | model
+# response = chain.invoke({"lastname":"张", "gender":"女儿"})
+# 报错：ValueError: Invalid input type <class 'langchain_core.messages.ai.AIMessage'>. Must be a PromptValue, str, or list of BaseMessages.
+
+# 使用 StrOutputParser 转换第1个model的输出AIMessage，StrOutputParser表示AIMessage转为字符串后，作为第2个model的输入字符串
+strOutputParser = StrOutputParser()
+chain = prompt | model | strOutputParser | model
+response = chain.invoke({"lastname":"张", "gender":"女儿"})
+
+print(type(response)) # <class 'langchain_core.messages.ai.AIMessage'>
+print(response.content) # 你好！你提到“张若曦”，。。。。。。
+
+# 方式2：不使用 response.content打印输出，而使用 StrOutputParser 做类型转换
+print("\n========== 方式2：不使用 response.content打印输出，而使用 StrOutputParser 做类型转换 ")
+chain2 = prompt | model | strOutputParser | model | strOutputParser
+response2 = chain2.invoke({"lastname":"张", "gender":"女儿"})
+print(type(response2)) # <class 'langchain_core.messages.base.TextAccessor'>
+print(response2) # 你好！你提到“张若溪”。。。。。。
+```
+
+<br>
+
+---
+
+### 【总结】StrOutputParser
+
+1. StrOutputParser 是 langchain内置的简单字符串解析器；
+   1. 可以将AIMessage 类型转换为基础字符串；
+   2. <font color=red>可以加入chain作为组件存在（因为StrOutputParser是Runnable接口的子类）</font>;
+
+<br>
+
+---
+
+## 【3.19】JsonOutputParser和多模型执行链
+
+### 【3.19.1】JsonOutputParser介绍
+
+1. ```chain = prompt | model | strOutputParser | model``` 这行代码的处理并不常见； 
+   1. 因为上一个模型的输出，没有被处理就输入给下一个模型；
+2. 正常情况下我们应该有如下处理逻辑：
+   1. invoke | stream 初始输入 -> 提示词模板 -> 模型 -> <font color=red>数据处理（新增） -> 提示词模板（新增）</font> -> 模型 -> 解析器 -> 结果  
+   2. <font color=red>即上述伪代码的处理逻辑是： 上一个模型的输出，作为提示词模板的输入，构建下一个提示词，再把提示词作为第二个模型的输入</font>； 
+
+
+
 
 
 
