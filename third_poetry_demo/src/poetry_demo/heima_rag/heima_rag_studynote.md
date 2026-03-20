@@ -2103,9 +2103,21 @@ print(response2) # 你好！你提到“张若溪”。。。。。。
    1. invoke | stream 初始输入 -> 提示词模板 -> 模型 -> <font color=red>数据处理（新增） -> 提示词模板（新增）</font> -> 模型 -> 解析器 -> 结果  
    2. <font color=red>即上述伪代码的处理逻辑是： 上一个模型的输出，作为提示词模板的输入，构建下一个提示词，再把提示词作为第二个模型的输入</font>； 
 
+<br>
 
+### 【3.19.2】如何对模型输出结果做数据处理
 
+1. 第1次model的输出类型为AIMessage， 而提示词模板的输入类型为dict
+2. <font color=red>所以解决办法是：把模型输出的AIMessage类型转为字典dict，然后注入第2个提示词模板中，形成新的提示词（PromptValue对象）</font>;
+   1. <font color=red>使用 JsonOutputParser 把AIMessage转为dict </font>；
 
+【PromptTemplate-invoke方法源码】输入类型是dict
+
+```python
+def invoke(
+    self, input: dict, config: RunnableConfig | None = None, **kwargs: Any
+) -> PromptValue:
+```
 
 
 
