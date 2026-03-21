@@ -17,6 +17,7 @@ second_template = PromptTemplate.from_template(
 )
 
 # 使用RunnableLambda类创建自定义函数
+# 函数的入参： AIMessage -> dict({"name":"xxx"})
 my_func = RunnableLambda(lambda ai_msg : {"name":ai_msg.content})
 
 # 基于RunnableLambda函数构建langchain链
