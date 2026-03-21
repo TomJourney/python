@@ -2222,12 +2222,102 @@ for chunk in result:
 
    1. 上述代码我们使用json_parser做了数据处理；
    2. <font color=red>作为可选方案，数据处理还可以自定义函数来实现；自定义函数通过编写RunnableLambda函数来实现</font>； 
+   3. <font color=red>优点：RunnableLambda自定义处理函数会更加灵活，格式不限；（而JsonOutputParser要求输入格式是json）</font>;
 
 4. RunnableLambda类是langchain内置的， 将普通函数等转换为 Runnable接口实例， 方便自定义函数加入chain； 
 
    1. 语法： RunnableLambda(函数对象或lambda匿名函数)
 
+【0319_stream_runnable_lambda_func.py】
 
+```python
+from langchain_core.output_parsers import JsonOutputParser
+from langchain_core.output_parsers import StrOutputParser
+from langchain_core.prompts import PromptTemplate
+from langchain_community.chat_models.tongyi import ChatTongyi
+from langchain_core.runnables import RunnableLambda
+
+str_parser = StrOutputParser()
+
+model = ChatTongyi(model="qwen3-max")
+
+first_template = PromptTemplate.from_template(
+    "我邻居姓{lastname}， 刚生了{gender}， 请起名，仅告诉我名字，不需要额外信息"
+)
+
+second_template = PromptTemplate.from_template(
+    "姓名{name}， 请帮我解析含义"
+)
+
+# 使用RunnableLambda类创建自定义函数
+my_func = RunnableLambda(lambda ai_msg : {"name":ai_msg.content})
+
+# 基于RunnableLambda函数构建langchain链
+chain = first_template | model | my_func | second_template | model | str_parser
+# 流式输出调用llm
+result = chain.stream({"lastname":"张", "gender":"女儿"})
+
+for chunk in result:
+    print(chunk, end="", flush=True) # 当然可以！我们来解析一下“张婉清”这个名字的含义。......
+```
+
+<br>
+
+### 【3.20.2】自定义函数直接入链
+
+1. 函数直接入链： 
+
+2. ```python
+   chain2 = (first_template | model | RunnableLambda(lambda ai_msg : {"name":ai_msg.content})
+             | second_template | model | str_parser)
+   ```
+
+2. <font color=red>跳过 RunnableLambda类，直接让函数入链</font>； 
+   1. 因为Runnable接口类在重写 _ _ or _ _ 函数时，支持Callable接口的实例； 而函数就是 Callable接口的实例；
+
+【0319_stream_runnable_lambda_func.py】 <font color=red>本质是将函数自动转为 RunnableLambda </font>
+
+```python
+from langchain_core.output_parsers import JsonOutputParser
+from langchain_core.output_parsers import StrOutputParser
+from langchain_core.prompts import PromptTemplate
+from langchain_community.chat_models.tongyi import ChatTongyi
+from langchain_core.runnables import RunnableLambda
+
+str_parser = StrOutputParser()
+
+model = ChatTongyi(model="qwen3-max")
+
+first_template = PromptTemplate.from_template(
+    "我邻居姓{lastname}， 刚生了{gender}， 请起名，仅告诉我名字，不需要额外信息"
+)
+
+second_template = PromptTemplate.from_template(
+    "姓名{name}， 请帮我解析含义"
+)
+
+# 使用RunnableLambda类创建自定义函数
+my_func = RunnableLambda(lambda ai_msg : {"name":ai_msg.content})
+
+# 基于RunnableLambda函数构建langchain链
+chain = first_template | model | my_func | second_template | model | str_parser
+# 流式输出调用llm
+result = chain.stream({"lastname":"张", "gender":"女儿"})
+
+for chunk in result:
+    print(chunk, end="", flush=True) # 当然可以！我们来解析一下“张婉清”这个名字的含义。......
+
+# 方式2 ： 直接把RunnableLambda自定义函数加入链
+print("\n\n ========== 方式2： 直接把RunnableLambda自定义函数加入链: ")
+chain2 = (first_template | model | RunnableLambda(lambda ai_msg : {"name":ai_msg.content})
+          | second_template | model | str_parser)
+result2 = chain2.invoke({"lastname":"张", "gender":"女儿"}) #
+print(result2)
+```
+
+<br>
+
+---
 
 
 
