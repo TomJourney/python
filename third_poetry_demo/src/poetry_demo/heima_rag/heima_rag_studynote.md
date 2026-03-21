@@ -2278,35 +2278,6 @@ for chunk in result:
 【0319_stream_runnable_lambda_func.py】 <font color=red>本质是将函数自动转为 RunnableLambda </font>
 
 ```python
-from langchain_core.output_parsers import JsonOutputParser
-from langchain_core.output_parsers import StrOutputParser
-from langchain_core.prompts import PromptTemplate
-from langchain_community.chat_models.tongyi import ChatTongyi
-from langchain_core.runnables import RunnableLambda
-
-str_parser = StrOutputParser()
-
-model = ChatTongyi(model="qwen3-max")
-
-first_template = PromptTemplate.from_template(
-    "我邻居姓{lastname}， 刚生了{gender}， 请起名，仅告诉我名字，不需要额外信息"
-)
-
-second_template = PromptTemplate.from_template(
-    "姓名{name}， 请帮我解析含义"
-)
-
-# 使用RunnableLambda类创建自定义函数
-my_func = RunnableLambda(lambda ai_msg : {"name":ai_msg.content})
-
-# 基于RunnableLambda函数构建langchain链
-chain = first_template | model | my_func | second_template | model | str_parser
-# 流式输出调用llm
-result = chain.stream({"lastname":"张", "gender":"女儿"})
-
-for chunk in result:
-    print(chunk, end="", flush=True) # 当然可以！我们来解析一下“张婉清”这个名字的含义。......
-
 # 方式2 ： 直接把RunnableLambda自定义函数加入链
 print("\n\n ========== 方式2： 直接把RunnableLambda自定义函数加入链: ")
 chain2 = (first_template | model | RunnableLambda(lambda ai_msg : {"name":ai_msg.content})
@@ -2317,9 +2288,44 @@ print(result2)
 
 <br>
 
+【 Runnable#_ _ or _ _ 函数源码】
+
+```python
+def __or__(
+    self,
+    other: Runnable[Any, Other]
+    | Callable[[Iterator[Any]], Iterator[Other]]
+    | Callable[[AsyncIterator[Any]], AsyncIterator[Other]]
+    | Callable[[Any], Other]
+    | Mapping[str, Runnable[Any, Other] | Callable[[Any], Other] | Any],
+) -> RunnableSerializable[Input, Other]:
+    """Runnable "or" operator.
+
+    Compose this `Runnable` with another object to create a
+    `RunnableSequence`.
+
+    Args:
+        other: Another `Runnable` or a `Runnable`-like object.
+
+    Returns:
+        A new `Runnable`.
+    """
+    return RunnableSequence(self, coerce_to_runnable(other))
+```
+
 ---
 
+### 【3.20.3】总结
 
+1. 如果要在链中加入自定义函数，可以选择：
+   1. <font color=red>将函数封装到 RunnableLambda类对象</font>， 实际是 Runnable接口实例， 可以直接入链； 
+   2. 直接将函数入链， 函数会自动转换为 RunnableLambda ； 
+
+<br>
+
+---
+
+【3.21】
 
 
 
