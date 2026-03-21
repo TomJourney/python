@@ -2325,7 +2325,165 @@ def __or__(
 
 ---
 
-【3.21】
+## 【3.21】langchain框架Memory临时会话记忆
+
+### 【3.21.1】临时记忆
+
+1. 如果想要封装历史记录，除了自行维护历史消息外，也可以借助langchain内置的历史记录附加功能；
+2. langchain提供了history功能，帮助模型在有历史记忆的情况下回答：
+   1. 基于RunnableWithMessageHistory在原有链的基础上创建带有历史记录功能的新链（新Runnable实例）
+   2. 基于InMemoryChatMessageHistory 为历史记录提供内存存储（临时用）
+
+【代码实现-基于临时会话记忆调用大模型】0321_temp_session_memory.py
+
+```python
+# 临时会话记忆
+from langchain_community.chat_models.tongyi import ChatTongyi
+from langchain_core.prompts import PromptTemplate, MessagesPlaceholder
+from langchain_core.output_parsers import StrOutputParser
+# RunnableWithMessageHistory 帮助创建一个带有历史消息的新链
+from langchain_core.runnables.history import RunnableWithMessageHistory
+from langchain_core.chat_history import InMemoryChatMessageHistory
+from langchain_core.prompts.chat import ChatPromptTemplate
+
+model = ChatTongyi(model="qwen3-max")
+
+# 方式1： 通用提示词模板
+# prompt = PromptTemplate.from_template(
+#     "你需要根据会话历史回应用户问题。对话历史：{chat_history}，用户提问：{input}，请回答"
+# )
+# chat_history 是函数get_history通过session_id获取的InMemoryChatMessageHistory类实例，并注入的
+
+# 方式2： 聊天提示词模板
+prompt = ChatPromptTemplate.from_messages(
+    [
+        ("system", "你需要根据会话历史回答用户问题。会话历史如下："),
+        MessagesPlaceholder("chat_history"),
+        ("human", "请回答如下问题: {input}")
+    ]
+)
+
+str_parser = StrOutputParser()
+
+# 打印提示词
+def print_prompt(full_prompt):
+    print("="*20, full_prompt.to_string(), "="*20)
+    return full_prompt
+
+# 创建基础链
+base_chain = prompt | print_prompt | model | str_parser
+
+# 创建一个字典，key是session_id， value就是 InMemoryChatMessageHistory 类对象
+story = {}
+# 实现通过会话id获取 InMemoryChatMessageHistory 类对象
+def get_history(session_id):
+    if session_id not in story:
+        story[session_id] = InMemoryChatMessageHistory()
+    return story[session_id]
+
+# 创建一个新链(会话链)： 对基础链增强功能：自动附加历史消息
+conversation_chain = RunnableWithMessageHistory(
+    base_chain, # 被增强的chain
+    get_history, # 通过会话id获取 InMemoryChatMessageHistory 类对象
+    input_messages_key="input", # 表示用户输入在模板中的占位符
+    history_messages_key="chat_history" # 表示用户输入在模板中的占位符
+)
+
+if __name__ == "__main__":
+    # 固定格式，添加langchain配置，为当前程序配置所属的session_id
+    session_config = {
+        "configurable":{
+            "session_id":"user_001"
+        }
+    }
+    result = conversation_chain.invoke({"input":"小明有2只猫"}, session_config)
+    print("第1次执行", result)
+
+    result = conversation_chain.invoke({"input": "小刚有1只狗"}, session_config)
+    print("第2次执行", result)
+
+    result = conversation_chain.invoke({"input": "总共有几只宠物"}, session_config)
+    print("第3次执行", result)
+```
+
+【运行结果】
+
+```c++
+=================== System: 你需要根据会话历史回答用户问题。会话历史如下：
+Human: 请回答如下问题: 小明有2只猫 ====================
+第1次执行 小明有2只猫。
+==================== System: 你需要根据会话历史回答用户问题。会话历史如下：
+Human: 小明有2只猫
+AI: 小明有2只猫。
+Human: 请回答如下问题: 小刚有1只狗 ====================
+第2次执行 小刚有1只狗。
+==================== System: 你需要根据会话历史回答用户问题。会话历史如下：
+Human: 小明有2只猫
+AI: 小明有2只猫。
+Human: 小刚有1只狗
+AI: 小刚有1只狗。
+Human: 请回答如下问题: 总共有几只宠物 ====================
+第3次执行 小明有2只猫，小刚有1只狗，所以总共有：
+
+2 + 1 = **3只宠物**。
+```
+
+<br>
+
+### 【3.21.2】总结 
+
+1. RunnableWithMessageHistory是langchain内Runnable接口的实现，主要用于：创建一个带有历史记忆功能的Runnable实例（链）； 
+2. 它在创建的时候需要提供一个 BaseChatMessageHistory的具体实现（用来存储历史消息）
+   1. InMemoryChatMessageHistory ： 可以实现在内存中存储历史；
+3. 额外的，如果想要在invoke或stream执行链的同时，把提示词打印出来，可以在链中加入自定义函数，如上述代码的print_prompt 函数； 
+
+<br>
+
+---
+
+## 【3.22】langchain框架Memory长期回话记忆
+
+### 【3.22.1】memory长期回话记忆
+
+1. 问题与解决方法：
+   1. 问题： InMemoryChatMessageHistory仅可以在内存中临时保存会话记忆，一旦程序退出，则记忆消失；
+      1. InMemoryChatMessageHistory 类继承自 BaseChatMessageHistory ；
+   2. 解决方法：
+      1. 在官方注释中给出了相关的实现指南， 并给出了<font color=red>基于文件的历史消息（FileChatMessageHistory）</font>存储示例代码； 
+      2. 我们可以自定实现一个基于json格式和本地文件的会话数据保存；
+
+<br>
+
+### 【3.22.2】FileChatMessageHistory实现长期回话记忆
+
+1. FileChatMessageHistory类实现的核心思路：基于文件存储会话记录，以 session_id 为文件名， 不同session_id 由不同文件存储消息； 
+   1. FileChatMessageHistory继承了 BaseChatMessageHistory ； 
+2. 继承 BaseChatMessageHistory 实现如下3个方法：
+   1. add_messages: 同步模式， 添加消息； 
+   2. messages: 同步模式， 获取消息；  
+   3. clear： 同步模式， 清除消息； 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
