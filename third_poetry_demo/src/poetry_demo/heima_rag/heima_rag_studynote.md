@@ -2119,9 +2119,113 @@ def invoke(
 ) -> PromptValue:
 ```
 
+<br>
 
+【代码实现】基于 JsonOutputParser 构建langchain链
 
+【0319_json_output_parser.py】
 
+```python
+from langchain_core.output_parsers import JsonOutputParser
+from langchain_core.output_parsers import StrOutputParser
+from langchain_core.prompts import PromptTemplate
+from langchain_community.chat_models.tongyi import ChatTongyi
+
+str_parser = StrOutputParser()
+json_parser = JsonOutputParser()
+
+model = ChatTongyi(model="qwen3-max")
+
+first_template = PromptTemplate.from_template(
+    "我邻居姓{lastname}， 刚生了{gender}， 请起名，并封装到JSON格式返回给我，"
+    "要求key是name，value是起的名字。请严格遵守格式要求"
+)
+
+second_template = PromptTemplate.from_template(
+    "姓名{name}， 请帮我解析含义"
+)
+
+# 构建langchain链
+chain = first_template | model | json_parser | second_template | model | str_parser
+
+result = chain.invoke({"lastname":"张", "gender":"女儿"})
+print(type(result)) # <class 'langchain_core.messages.base.TextAccessor'>
+print(result)
+# “张婉清”是一个富有诗意和文化内涵的中文姓名 。。。。。。
+```
+
+<br>
+
+【0319_stream_json_output_parser.py】基于 JsonOutputParser 构建langchain链进行流式输出
+
+```python
+from langchain_core.output_parsers import JsonOutputParser
+from langchain_core.output_parsers import StrOutputParser
+from langchain_core.prompts import PromptTemplate
+from langchain_community.chat_models.tongyi import ChatTongyi
+
+str_parser = StrOutputParser()
+json_parser = JsonOutputParser()
+
+model = ChatTongyi(model="qwen3-max")
+
+first_template = PromptTemplate.from_template(
+    "我邻居姓{lastname}， 刚生了{gender}， 请起名，并封装到JSON格式返回给我，"
+    "要求key是name，value是起的名字。请严格遵守格式要求"
+)
+
+second_template = PromptTemplate.from_template(
+    "姓名{name}， 请帮我解析含义"
+)
+
+# 构建langchain链
+chain = first_template | model | json_parser | second_template | model | str_parser
+# 流式输出调用llm
+result = chain.stream({"lastname":"张", "gender":"女儿"})
+
+for chunk in result:
+    print(chunk, end="", flush=True)
+```
+
+<br>
+
+---
+
+### 【总结】JsonOutputParser
+
+1. 在构建链的时候要注意整体兼容性， 注意前后组件的输入和输出要求； 
+   1. 模型输入： PromptValue 或字符串或序列 （BaseMessage, list, tuple, str, dict）
+   2. 模型输出：AIMessage； 
+   3. 提示词模板输入： 要求是字典 
+   4. 提示词模板输出： PromptValue 对象 
+   5. StrOutputParser ： AIMessage输入， str输出 
+   6. JsonOutputParser： AIMessage输入，dict输出 
+
+![jsom_output_parser](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/img/jsom_output_parser.png)
+
+<br>
+
+---
+
+## 【3.20】langchain框架RunnableLambda及把自定义函数加入链
+
+### 【3.20.1】RunnableLambda类
+
+1. 构建链代码： 
+
+2. ```python
+   # 构建langchain链
+   chain = first_template | model | json_parser | second_template | model | str_parser
+   ```
+
+3. 问题：
+
+   1. 上述代码我们使用json_parser做了数据处理；
+   2. <font color=red>作为可选方案，数据处理还可以自定义函数来实现；自定义函数通过编写RunnableLambda函数来实现</font>； 
+
+4. RunnableLambda类是langchain内置的， 将普通函数等转换为 Runnable接口实例， 方便自定义函数加入chain； 
+
+   1. 语法： RunnableLambda(函数对象或lambda匿名函数)
 
 
 
