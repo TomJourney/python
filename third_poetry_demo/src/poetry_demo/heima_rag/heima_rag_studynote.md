@@ -2465,11 +2465,141 @@ Human: 请回答如下问题: 总共有几只宠物 ====================
 
 <br>
 
-【代码实现】
+---
 
+### 【3.22.3】代码实现
 
+【module_0322_consistent_session_memory.py】长期记忆模板
 
+```python
+# 持久或长期会话记忆
+import json
+import os
+from collections.abc import Sequence
 
+from langchain_core.messages import message_to_dict, messages_from_dict, BaseMessage
+from langchain_core.chat_history import BaseChatMessageHistory
+# message_to_dict: 单个消息对象 (BaseMessage类实例) -> 字典
+# message_from_dict： [字典, 字典...] -> [消息, 消息...]
+# AIMessage, HumanMessage, SystemMessage, 都是BaseMessage的子类
+
+class DiyFileChatMessageHistory(BaseChatMessageHistory):
+    def __init__(self, session_id, storage_path):
+        self.session_id = session_id # 会话id
+        self.storage_path = storage_path  # 不同会话id的存储文件， 所在的文件夹路径
+        # 完整的文件路径
+        self.file_path = os.path.join(self.storage_path, self.session_id)
+
+        # 确保文件夹是存在的
+        os.makedirs(os.path.dirname(self.file_path), exist_ok=True)
+
+    def add_message(self, message:Sequence[BaseMessage]) -> None:
+        # Sequence序列 ： 类似list, tuple
+        all_messages = list(self.messages) # 已有的消息列表
+        all_messages.extend(message) # 新的和已有的融合为一个list
+
+        # 将数据同步写入到本地文件
+        # 类对象写入文件 -> 一堆二进制
+        # 为了方便，可以将 BaseMessage 消息转为字典（借助 json模块以json字符串写入文件 ）
+        new_messages= [message_to_dict(message) for message in all_messages]
+        # 将数据写入文件
+        with open(self.file_path, 'w', encoding="utf-8") as f:
+            json.dump(new_messages, f)
+
+    @property  # @property 把message方法变成成员属性用
+    def messages(self) -> list[BaseMessage]:
+        # 当前文件内： list[字典]
+        try:
+            with open(self.file_path, 'r', encoding="utf-8") as f:
+                message_data = json.load(f) # 返回值就是： list[字典]
+                return messages_from_dict(message_data)
+        except FileNotFoundError:
+            return []
+
+    def clear(self) -> None:
+        with open(self.file_path, 'w', encoding="utf-8") as f:
+            json.dump([], f)
+```
+
+【0322_consistent_session_memory_test.py】长期记忆测试案例
+
+```python
+# 临时会话记忆
+from langchain_community.chat_models.tongyi import ChatTongyi
+from langchain_core.prompts import PromptTemplate, MessagesPlaceholder
+from langchain_core.output_parsers import StrOutputParser
+# RunnableWithMessageHistory 帮助创建一个带有历史消息的新链
+from langchain_core.runnables.history import RunnableWithMessageHistory
+from langchain_core.chat_history import InMemoryChatMessageHistory
+from langchain_core.prompts.chat import ChatPromptTemplate
+from module_0322_consistent_session_memory import DiyFileChatMessageHistory
+
+model = ChatTongyi(model="qwen3-max")
+
+# 方式1： 通用提示词模板
+# prompt = PromptTemplate.from_template(
+#     "你需要根据会话历史回应用户问题。对话历史：{chat_history}，用户提问：{input}，请回答"
+# )
+# chat_history 是函数get_history通过session_id获取的InMemoryChatMessageHistory类实例，并注入的
+
+# 方式2： 聊天提示词模板
+prompt = ChatPromptTemplate.from_messages(
+    [
+        ("system", "你需要根据会话历史回答用户问题。会话历史如下："),
+        MessagesPlaceholder("chat_history"),
+        ("human", "请回答如下问题: {input}")
+    ]
+)
+
+str_parser = StrOutputParser()
+
+# 打印提示词
+def print_prompt(full_prompt):
+    print("="*20, full_prompt.to_string(), "="*20)
+    return full_prompt
+
+# 创建基础链
+base_chain = prompt | print_prompt | model | str_parser
+
+# 实现通过会话id获取 InMemoryChatMessageHistory 类对象
+def get_history(session_id):
+    return DiyFileChatMessageHistory(session_id, "./chat_history")
+
+# 创建一个新链(会话链)： 对基础链增强功能：自动附加历史消息
+conversation_chain = RunnableWithMessageHistory(
+    base_chain, # 被增强的chain
+    get_history, # 通过会话id获取 InMemoryChatMessageHistory 类对象
+    input_messages_key="input", # 表示用户输入在模板中的占位符
+    history_messages_key="chat_history" # 表示用户输入在模板中的占位符
+)
+
+if __name__ == "__main__":
+    # 固定格式，添加langchain配置，为当前程序配置所属的session_id
+    session_config = {
+        "configurable":{
+            "session_id":"user_001"
+        }
+    }
+    result = conversation_chain.invoke({"input":"小明有2只猫"}, session_config)
+    print("第1次执行", result)
+
+    result = conversation_chain.invoke({"input": "小刚有1只狗"}, session_config)
+    print("第2次执行", result)
+
+    result = conversation_chain.invoke({"input": "总共有几只宠物"}, session_config)
+    print("第3次执行", result)
+```
+
+【测试步骤】
+
+- 步骤1：注释第三次执行的代码；仅执行第1次与第2次执行的代码；<font color=red>执行后就有回话历史保存到文件</font>；
+- 步骤2：注释第一次与第二次执行的代码；仅执行第3次执行的代码；<font color=red>执行时读取文件中的会话历史，接着执行第三次执行代码</font>；
+
+【补充】代码运行失败，需要调试
+
+<br>
+
+---
 
 
 

@@ -6,6 +6,7 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain_core.chat_history import InMemoryChatMessageHistory
 from langchain_core.prompts.chat import ChatPromptTemplate
+from module_0322_consistent_session_memory import DiyFileChatMessageHistory
 
 model = ChatTongyi(model="qwen3-max")
 
