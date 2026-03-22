@@ -3036,7 +3036,7 @@ print(f"字符串切⽚: {string_var[0:5]}")' metadata={'producer': 'macOS 版�
 
 ![rag_flow](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/img/rag_flow.png)
 
-2. 如上图，这是一个典型的向量存储应用，也是典型的rag流程
+2. <font color=red>如上图，这是一个典型的向量存储应用，也是典型的rag流程（这张rag图非常重要）</font>；
 3. 这部分开发主要涉及到：
    1. 如何文本转向量； 
    2. 创建向量存储，基于向量存储完成：
@@ -3055,13 +3055,204 @@ print(f"字符串切⽚: {string_var[0:5]}")' metadata={'producer': 'macOS 版�
 
 ### 【3.27.2】向量存储代码实现
 
+【案例1-内存向量存储-InMemoryVectorStore】test_0327_memory_vector_store.py
 
+```python
+from langchain_core.vectorstores import InMemoryVectorStore
+from langchain_community.embeddings import DashScopeEmbeddings
+from langchain_community.document_loaders import CSVLoader
 
+# 创建内存向量存储对象（内存数据库）
+vector_store = InMemoryVectorStore(
+    embedding=DashScopeEmbeddings(),
+)
 
+loader = CSVLoader(
+    file_path="../data/info.csv",
+    encoding="utf-8",
+    source_column="source", # 指定本条数据的来源
+)
 
+documents = loader.load()
+print(documents[0])
+print(documents[1])
+# page_content='source: 百度
+# info: python是世界上最好的编程语言' metadata={'source': '百度', 'row': 0}
+# page_content='source: 必应
+# info: python学起来很简单' metadata={'source': '必应', 'row': 1}
 
+# 向量存储的 新增，删除，检索
+vector_store.add_documents(
+    documents=documents, # 被添加的文档，类型：list[Document]
+    ids=["id" + str(i) for i in range(1, len(documents)+1)] # 给添加的文档提供id（字符串） list[str]
+)
 
+# 删除 传入[id, id...]
+vector_store.delete(["id1", "id2"])
 
+# 检索
+print("\n\n\n========== 检索 ")
+result = vector_store.similarity_search(
+    "python是不是简单易学",
+    3, # 检索出几条最相似的结果
+)
+print(result)
+```
+
+【运行结果】
+
+```c++
+[Document(id='id3', metadata={'source': '百度', 'row': 2}, page_content='source: 百度\ninfo: langchain极大方便了模型开发'), Document(id='id4', metadata={'source': '必应', 'row': 3}, page_content='source: 必应\ninfo: 如何快速减肥'), Document(id='id5', metadata={'source': '百度', 'row': 4}, page_content='source: 百度\ninfo: 明天晚上吃啥子')]
+```
+
+<br>
+
+【案例2-向量数据库存储-Chroma】test_0327_consistent_vector_store.py
+
+```python
+from langchain_community.embeddings import DashScopeEmbeddings
+from langchain_community.document_loaders import CSVLoader
+from langchain_chroma import Chroma
+
+# Chroma 向量数据库（轻量级的）
+# 确保 langchain-chroma chromadb 这两个库安装了的
+
+# 创建内存向量存储对象（内存数据库）
+vector_store = Chroma(
+    collection_name="test", # 类似于数据库表名
+    embedding_function=DashScopeEmbeddings(), # 提供嵌入模型
+    persist_directory="./chroma_db", # 指定数据存放的文件夹
+)
+
+loader = CSVLoader(
+    file_path="../data/info.csv",
+    encoding="utf-8",
+    source_column="source", # 指定本条数据的来源
+)
+
+documents = loader.load()
+print(documents[0])
+print(documents[1])
+# page_content='source: 百度
+# info: python是世界上最好的编程语言' metadata={'source': '百度', 'row': 0}
+# page_content='source: 必应
+# info: python学起来很简单' metadata={'source': '必应', 'row': 1}
+
+# 向量存储的 新增，删除，检索
+vector_store.add_documents(
+    documents=documents, # 被添加的文档，类型：list[Document]
+    ids=["id" + str(i) for i in range(1, len(documents)+1)] # 给添加的文档提供id（字符串） list[str]
+)
+
+# 删除 传入[id, id...]
+vector_store.delete(["id1", "id2"])
+
+# 检索
+print("\n\n\n========== 检索 ")
+result = vector_store.similarity_search(
+    "python是不是简单易学",
+    3 # 检索出几条最相似的结果
+)
+print(result)
+```
+
+【运行结果】
+
+```python
+from langchain_community.embeddings import DashScopeEmbeddings
+from langchain_community.document_loaders import CSVLoader
+from langchain_chroma import Chroma
+
+# Chroma 向量数据库（轻量级的）
+# 确保 langchain-chroma chromadb 这两个库安装了的
+
+# 创建内存向量存储对象（内存数据库）
+vector_store = Chroma(
+    collection_name="test", # 类似于数据库表名
+    embedding_function=DashScopeEmbeddings(), # 提供嵌入模型
+    persist_directory="./chroma_db", # 指定数据存放的文件夹
+)
+
+loader = CSVLoader(
+    file_path="../data/info.csv",
+    encoding="utf-8",
+    source_column="source", # 指定本条数据的来源
+)
+
+documents = loader.load()
+print(documents[0])
+print(documents[1])
+# page_content='source: 百度
+# info: python是世界上最好的编程语言' metadata={'source': '百度', 'row': 0}
+# page_content='source: 必应
+# info: python学起来很简单' metadata={'source': '必应', 'row': 1}
+
+# 向量存储的 新增，删除，检索
+vector_store.add_documents(
+    documents=documents, # 被添加的文档，类型：list[Document]
+    ids=["id" + str(i) for i in range(1, len(documents)+1)] # 给添加的文档提供id（字符串） list[str]
+)
+
+# 删除 传入[id, id...]
+vector_store.delete(["id1", "id2"])
+
+# 检索
+print("\n\n\n========== 检索 ")
+result = vector_store.similarity_search(
+    "python是不是简单易学",
+    3 # 检索出几条最相似的结果
+)
+print(result)
+```
+
+<br>
+
+【案例3-向量数据库存储+仅检索】test_0327_only_search_consistent_vector_store.py
+
+```python
+from langchain_community.embeddings import DashScopeEmbeddings
+from langchain_community.document_loaders import CSVLoader
+from langchain_chroma import Chroma
+
+# Chroma 向量数据库（轻量级的）
+# 确保 langchain-chroma chromadb 这两个库安装了的
+
+# 创建内存向量存储对象（内存数据库）
+vector_store = Chroma(
+    collection_name="test", # 类似于数据库表名
+    embedding_function=DashScopeEmbeddings(), # 提供嵌入模型
+    persist_directory="./chroma_db", # 指定数据存放的文件夹
+)
+
+# 删除保存文档到chroma向量数据库的代码，仅保留检索代码，如下。因为文档嵌入后已经被持久化到chroma向量数据库中。
+
+# 检索
+print("\n\n\n========== 检索 ")
+result = vector_store.similarity_search(
+    "python是不是简单易学",
+    3, # 检索出几条最相似的结果
+    filter={"source":"百度"} # 或有，设置过滤条件
+)
+print(result)
+```
+
+<br>
+
+### 【3.27.3】总结
+
+1. langchain内部提供了向量存储功能，可以基于：
+   1. InMemoryVectorStore, 完成内存向量存储； 
+   2. Chroma， 外部数据库向量存储；  
+2. 向量存储类均提供了3个通用API接口：
+   1. add_document: 添加文档到向量存储；  
+   2. delete, 从向量存储中删除文档 
+   3. Similarity_serach: 相似性搜索； 
+
+<br>
+
+---
+
+## 【3.28】基于向量检索构建提示词 
 
 
 
