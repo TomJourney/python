@@ -2777,11 +2777,95 @@ d: 吃饭3,rap' metadata={'source': '../data/stu.csv', 'row': 3}
 
 ### 【3.25.1】JSONLoader介绍
 
+1. JSONLoader：用于把json数据加载为Document类对象；<font color=red>使用jsonloader需要额外安装 pip install jq </font>;
+2. jq 是一个跨平台的json解析工具， langchain底层对json解析就是基于jq工具实现的； 
+   1. 将json数据的信息抽取出来， 封装为Document对象，抽取的时候依赖 jq_schema 语法； 
 
+![json_loader_jq](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/img/json_loader_jq.png)
 
+3. JSONLoader-代码示例 
 
+![jsonloder_ex](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/img/jsonloder_ex.png)
 
+<br>
 
+【3.25.2】jsonloader代码实现
+
+【test0323_json_loader.py】
+
+```python
+from langchain_community.document_loaders import JSONLoader
+
+print("========== 【案例1】 使用jq schema抽取json文件 ")
+loader = JSONLoader(
+    file_path="../data/stu.json",
+    # jq_schema=".name",
+    # jq_schema=".other.addr"
+    jq_schema=".",  # 抽取整个json文件
+    text_content=False, # 告知JSONLoader，抽取的内容不是字符串
+)
+document = loader.load()
+print(document)
+
+print("========== 【案例2】使用jq schema抽取json 列表 文件 ")
+loader = JSONLoader(
+     file_path="../data/stu_list.json",
+    jq_schema=".[].name", # 仅抽取数组的name属性
+    text_content=False,  # 告知JSONLoader，抽取的内容不是字符串
+)
+document = loader.load()
+print(document)
+
+print("==========【案例3】 使用jq schema抽取json_lines 文件 ")
+loader = JSONLoader(
+    file_path="../data/json_line_stu_list.json",
+    jq_schema=".name", # 仅抽取数组的name属性
+    text_content=False,  # 告知JSONLoader，抽取的内容不是字符串
+    json_lines=True   # 告知JSONLoader， 这是一个jsonlines文件（每一行都是一个标准的json对象）
+)
+document = loader.load()
+print(document)
+```
+
+【运行结果】
+
+```c++
+	========== 【案例1】 使用jq schema抽取json文件 
+[Document(metadata={'source': '/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/data/stu.json', 'seq_num': 1}, page_content='{"name": "\\u5f20\\u4e09", "age": 11, "hobby": ["\\u5531\\u6b4c", "\\u8df3\\u821e", "rap"], "other": {"addr": "\\u6210\\u90fd", "tel": "123456"}}')]
+
+========== 【案例2】使用jq schema抽取json 列表 文件 
+[Document(metadata={'source': '/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/data/stu_list.json', 'seq_num': 1}, page_content='张三01'), Document(metadata={'source': '/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/data/stu_list.json', 'seq_num': 2}, page_content='张三02'), Document(metadata={'source': '/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/data/stu_list.json', 'seq_num': 3}, page_content='张三03')]
+
+==========【案例3】 使用jq schema抽取json_lines 文件 
+[Document(metadata={'source': '/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/data/json_line_stu_list.json', 'seq_num': 1}, page_content='张三01'), Document(metadata={'source': '/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/data/json_line_stu_list.json', 'seq_num': 2}, page_content='张三02'), Document(metadata={'source': '/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/data/json_line_stu_list.json', 'seq_num': 3}, page_content='张三03')]
+
+```
+
+<br>
+
+---
+
+### 【3.25.3】总结 
+
+1. JSONLoader依赖jq库， 通过 pip install jq 安装（或 poetry add jq ）：
+   1. <font color=red>JSONLoader 使用jq的解析语法，场景如下 </font>：
+      1. 点"." 表示根， [] 表示数组；  
+      2. .name 表示根取name的值；  
+      3. hobby[1] 表示取hobby数组的第2个元素； 
+      4. .[] 表示将数组内的每个字典(json对象) 都获取到 
+      5. .[].name 表示获取数组内每个字典（json对象）的name对应的值；  
+2. JSONLoader 初始化有4个主要参数：
+   1. file_path: 文件路径，必填；  
+   2. jq_schema: jq解析语法， 必填；  
+   3. text_context: 抽取到的是否是字符串， 默认为True，非必填；  
+   4. json_lines： 是否为JsonLines文件， 默认为False， 非必填； 
+      1. JSONLines文件： 每一行都是一个独立的字典（json对象）
+
+<br>
+
+---
+
+【3.26】
 
 
 
