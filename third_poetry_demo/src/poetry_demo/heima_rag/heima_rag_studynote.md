@@ -2601,9 +2601,85 @@ if __name__ == "__main__":
 
 ---
 
+## 【3.23】langchain框架组件-Document loaders：文档加载器
 
+### 【3.23.1】Document loaders：文档加载器介绍 
 
+1. <font color=red>文档加载器提供了一套标准接口，用于将不同来源（如csv，pdf或json等）的数据读取为langchain的文档格式</font>。这确保了无论数据来源如何，都能对齐进行一致性处理； 
+2. 文档加载器（内置或自行实现）：需要实现BaseLoader接口； 
+3. <font color=red>Class Document：是langchain内文档的统一载体， 所有文档加载器最终返回此类的实例</font>； 
+4. 一个基础的document类实例， 基于如下代码创建：
 
+```python
+from langchain_core.documents import Document
+
+document = Document(
+    page_content = "hello world", metadata={"source":"https://example.com"}
+)
+```
+
+5. 可以看到： Document类其核心记录了：
+   1. page_content: 文档内容
+   2. metadata： 文档元数据（字典）
+
+<br>
+
+### 【3.23.2】Document loaders加载文件的不同方法
+
+1. 不同文档加载器可能定义了不同参数， 但其都实现了统一的接口（方法）：
+   1. load()： 一次性加载全部文档； 
+   2. lazy_load() : 延迟流式传输文档，对大型数据集很有用， 避免内存溢出； 
+
+【例】CSVLoader的使用
+
+```python
+from langchain_community.document_loaders.csv_loader import CSVLoader
+
+loader = CSVLoader(
+    ... # 初始化参数 
+)
+
+# 一次性加载全部文档
+documents = loader.load()
+
+# 对于大数据集， 分段返回文档 
+for document in loader.lazy_load():
+  print(document)
+```
+
+<br>
+
+### 【3.23.3】CSVLoader-csv加载器
+
+1. langchain内置了许多文档加载器，官方文档：[https://docs.langchain.com/oss/python/integrations/document_loaders](https://docs.langchain.com/oss/python/integrations/document_loaders)
+2. 我们简单学习如下几个常用的文档加载器：
+   1. CSVLoader
+   2. JSONLoader
+   3. PDFLoader
+
+【例】CSVLoader测试代码
+
+```python
+from langchain_community.document_loaders.csv_loader import CSVLoader
+
+loader = CSVLoader(
+    ...  # Integration-specific parameters here
+)
+
+# Load all documents
+documents = loader.load()
+
+# For large datasets, lazily load documents
+for document in loader.lazy_load():
+    print(document)
+
+```
+
+<br>
+
+---
+
+### 【3.23.4】langchain-csv加载器-代码实现
 
 
 
