@@ -2953,6 +2953,97 @@ page_content='##!/usr/bin/env python3
 
 ### 【3.26.1】代码实现 
 
+【test_0326_pypdfloader.py】
+
+```python
+# PyPDFLoader-pdf文件加载器
+from langchain_community.document_loaders import PyPDFLoader
+
+loader = PyPDFLoader(
+    file_path="../data/python_syntax.pdf",
+    # mode="page" # 默认是page模式，每个页面形成一个document文档对象
+    mode = "single",  # 不管多少页，只返回一个document对象
+    # password="123455"  # pdf文件打开密码
+)
+
+i = 0
+for doc in loader.lazy_load():
+    i += 1
+    print(doc)
+    print("=" * 20, f"第{str(i)}个段落")
+```
+
+【运行结果】
+
+```c++
+page_content='#!/usr/bin/env python3
+-- coding: utf-8 --  
+"""
+Python基础语法示例
+展示了Python的核⼼语法特性
+"""
+import sys
+import math
+from typing import List, Dict, Optional
+==================== 1. 
+注释 
+====================
+ 
+这是单⾏注释  
+"""
+这是多⾏注释
+可以⽤来写⽂档字符串
+"""
+==================== 2.' metadata={'producer': 'macOS 版本15.1（版号24B2082） Quartz PDFContext', 'creator': 'Typora', 'creationdate': "D:20260322031716Z00'00'", 'moddate': "D:20260322031716Z00'00'", 'source': '../data/python_syntax.pdf', 'total_pages': 17, 'page': 0, 'page_label': '1'}
+==================== 第1个段落
+page_content='==================== 2. 
+变量和数据类型 
+====================
+ 
+print("=" * 50)
+print("2. 变量和数据类型")
+print("=" * 50)
+数字类型  
+integer_var = 42              # 整数
+float_var = 3.14159           # 浮点数
+complex_var = 3 + 4j          # 复数
+boolean_var = True            # 布尔值
+print(f"整数: {integer_var}, 类型: {type(integer_var)}")
+print(f"浮点数: {float_var}, 类型: {type(float_var)}")
+print(f"复数: {complex_var}, 类型: {type(complex_var)}")
+print(f"布尔值: {boolean_var}, 类型: {type(boolean_var)}")
+字符串  
+string_var = "Hello, Python!"
+multi_line_string = """这是
+多⾏
+字符串"""
+print(f"字符串: {string_var}")
+print(f"字符串⻓度: {len(string_var)}")
+print(f"字符串切⽚: {string_var[0:5]}")' metadata={'producer': 'macOS 版本15.1（版号24B2082） Quartz PDFContext', 'creator': 'Typora', 'creationdate': "D:20260322031716Z00'00'", 'moddate': "D:20260322031716Z00'00'", 'source': '../data/python_syntax.pdf', 'total_pages': 17, 'page': 1, 'page_label': '2'}
+==================== 第2个段落
+  .......
+```
+
+<br>
+
+---
+
+## 【3.27】VectorStores向量存储
+
+### 【3.27.1】Vector Stores 向量存储
+
+1. 基于langchain的向量存储，存储嵌入数据，并执行相似性搜索；
+
+
+
+
+
+
+
+
+
+
+
 
 
 
