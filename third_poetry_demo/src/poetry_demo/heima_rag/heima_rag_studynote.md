@@ -2940,9 +2940,18 @@ page_content='##!/usr/bin/env python3
    2. 可以指定小文档的最大字符数， 重叠字符数；  
    3. 可以手动指定段落划分的依据（符号），以及字符数量统计函数； 
 
+![pypdf_ex](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/img/pypdf_ex.png)
+
 <br>
 
 ---
+
+## 【3.26】PyPDFLoader-pdf文件加载器 
+
+1. langchain内支持许多pdf加载器，我们选择其中的PyPDFLoader加载器； 
+2. PyPDFLoader加载器， 依赖PyPDF库，所以需要事先安装PyPDF； poetry add pypdf 
+
+### 【3.26.1】代码实现 
 
 
 
