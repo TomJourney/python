@@ -3034,6 +3034,29 @@ print(f"字符串切⽚: {string_var[0:5]}")' metadata={'producer': 'macOS 版�
 
 1. 基于langchain的向量存储，存储嵌入数据，并执行相似性搜索；
 
+![rag_flow](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/img/rag_flow.png)
+
+2. 如上图，这是一个典型的向量存储应用，也是典型的rag流程
+3. 这部分开发主要涉及到：
+   1. 如何文本转向量； 
+   2. 创建向量存储，基于向量存储完成：
+      1. 存入向量； 
+      2. 删除向量； 
+      3. 向量检索；
+   3. langchain为向量存储提供了统一接口：
+      1. add_documents ; 
+      2. delete
+      3. Similarity_search 
+4. 向量存储的代码示例：
+
+![vector_stores](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/img/vector_stores.png)
+
+<br>
+
+### 【3.27.2】向量存储代码实现
+
+
+
 
 
 
