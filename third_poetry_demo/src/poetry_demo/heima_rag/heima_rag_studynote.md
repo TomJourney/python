@@ -2760,7 +2760,7 @@ d: 吃饭3,rap' metadata={'source': '../data/stu.csv', 'row': 3}
 
 <br>
 
-### 【3.24.5】总结 
+### 【3.23.5】总结 
 
 1. langchain内置了许多种类的文档加载器：
    1. 文档加载器均继承于 BaseLoader类； 
@@ -2773,9 +2773,9 @@ d: 吃饭3,rap' metadata={'source': '../data/stu.csv', 'row': 3}
 
 ---
 
-## 【3.25】langchain组件：JSONLoader
+## 【3.24】langchain组件：JSONLoader
 
-### 【3.25.1】JSONLoader介绍
+### 【3.24.1】JSONLoader介绍
 
 1. JSONLoader：用于把json数据加载为Document类对象；<font color=red>使用jsonloader需要额外安装 pip install jq </font>;
 2. jq 是一个跨平台的json解析工具， langchain底层对json解析就是基于jq工具实现的； 
@@ -2789,7 +2789,7 @@ d: 吃饭3,rap' metadata={'source': '../data/stu.csv', 'row': 3}
 
 <br>
 
-【3.25.2】jsonloader代码实现
+### 【3.24.2】jsonloader代码实现
 
 【test0323_json_loader.py】
 
@@ -2845,7 +2845,7 @@ print(document)
 
 ---
 
-### 【3.25.3】总结 
+### 【3.24.3】总结 
 
 1. JSONLoader依赖jq库， 通过 pip install jq 安装（或 poetry add jq ）：
    1. <font color=red>JSONLoader 使用jq的解析语法，场景如下 </font>：
@@ -2865,7 +2865,102 @@ print(document)
 
 ---
 
-【3.26】
+## 【3.25】TextLoader与文档分割器
+
+### 【3.25.1】TextLoader文档加载器（读取文本文件）
+
+1. TextLoader: 读取文本文件（如.txt），将全部内容放入一个Document对象中； 
+2. 问题：把所有内容都放入一个Document对象，<font color=red>若文档很大，则加载到一个Document对象中是否不太合适</font>？
+   1. <font color=red>解决方法： 使用文档分割器-RecursiveCharacterTextSplitter </font>;
+
+### 【3.25.2】文档分割器-RecursiveCharacterTextSplitter 
+
+1. <font color=red>文档分割器-RecursiveCharacterTextSplitter ，递归字符文本分割器，主要用于按照自然段落分割大文档</font>； 是langchain官方推荐的默认字符分割器； 它在保持上下文完整性和控制片段大小之间实现了良好平衡，开箱即用效果佳；
+
+2. 代码示例：
+
+![textloader_recursiveCharaterTextSplitter](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/img/textloader_recursiveCharaterTextSplitter.png)
+
+### 【3.25.3】代码实现 
+
+【test_0325_text_loader.py】文本加载与分割
+
+```python
+from langchain_community.document_loaders import  TextLoader
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+
+# 【案例1】使用TextLoader读取文本文件
+print("====== 【案例1】 使用TextLoader读取文本文件：")
+loader = TextLoader(
+    file_path="../data/python_base_syntax.txt",
+)
+
+documents = loader.load()
+# print(documents)
+# print(len(documents)) # 1
+
+# 【案例2】使用 RecursiveCharacterTextSplitter 分割字符
+print("========== 【案例2】使用 RecursiveCharacterTextSplitter 分割字符" )
+splitter = RecursiveCharacterTextSplitter(
+    chunk_size=500, # 分段的最大字符数
+    chunk_overlap=50,  # 分段之间允许的重叠字符数
+    separators=["\n\n", "\n", "!", " ", "!"], # 文本自然段落分割的依据符号
+    length_function=len # 统计字符的依据函数
+)
+
+# 分割文本
+split_docs = splitter.split_documents(documents)
+print(len(split_docs)) # 18 
+loop_time = 0
+for doc in split_docs:
+    loop_time = loop_time + 1
+    print("="*20, "第" + str(loop_time), "个段落")
+    print(doc)
+    print("=" * 20)
+```
+
+【运行结果】
+
+```c++
+===== 【案例1】 使用TextLoader读取文本文件：
+========== 【案例2】使用 RecursiveCharacterTextSplitter 分割字符
+18
+==================== 第1 个段落
+page_content='##!/usr/bin/env python3
+......
+```
+
+<br>
+
+### 【3.25.4】总结
+
+1. TextLoadert： 是一个简单的加载器，可以加载文本文件内容， 返回仅有一个Document对象的list；
+2. RecursiveCharacterTextSplitter： 递归字符文本分割器， 是langchain官方推荐的默认分割器； 
+   1. 基于文本的自然段落分割大文档为 小文档； 
+   2. 可以指定小文档的最大字符数， 重叠字符数；  
+   3. 可以手动指定段落划分的依据（符号），以及字符数量统计函数； 
+
+<br>
+
+---
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
