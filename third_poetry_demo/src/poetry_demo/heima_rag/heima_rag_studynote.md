@@ -2681,6 +2681,102 @@ for document in loader.lazy_load():
 
 ### 【3.23.4】langchain-csv加载器-代码实现
 
+【test_0323_csvloader.py】
+
+```python
+from langchain_community.document_loaders.csv_loader import CSVLoader
+
+loader = CSVLoader(
+    file_path="../data/stu.csv",
+    csv_args={
+        "delimiter" : ",", # 指定分隔符
+        "quotechar": '"', # 指定带有分隔符文本的引号是单引号还是双引号
+        "fieldnames": ['a', 'b', 'c', 'd'], # 或有，指定表头(但原文件的第一行的表头会被当做数据处理)
+    },
+    encoding="utf-8"  # 指定编码为utf-8
+)
+
+# 方式1：批量加载： .load() -> [Document, Document, ...]
+documents = loader.load()
+
+for document in documents:
+    print("="*20)
+    print(type(document), document)
+
+# 方式2： 懒加载 .lazy_load()  迭代器[Document]
+print("\n\n", "="*20, "方式2： 懒加载")
+for document in loader.lazy_load():
+    print("=" * 20)
+    print(document)
+```
+
+【运行结果】
+
+```c++
+===================
+<class 'langchain_core.documents.base.Document'> page_content='a: name
+b: age
+c: gender
+d: hobby' metadata={'source': '../data/stu.csv', 'row': 0}
+====================
+<class 'langchain_core.documents.base.Document'> page_content='a: 张三01
+b: 21
+c: 男
+d: 吃饭1,rap' metadata={'source': '../data/stu.csv', 'row': 1}
+====================
+<class 'langchain_core.documents.base.Document'> page_content='a: 张三02
+b: 22
+c: 男
+d: 吃饭2,rap' metadata={'source': '../data/stu.csv', 'row': 2}
+====================
+<class 'langchain_core.documents.base.Document'> page_content='a: 张三03
+b: 23
+c: 女
+d: 吃饭3,rap' metadata={'source': '../data/stu.csv', 'row': 3}
+
+
+ ==================== 方式2： 懒加载
+====================
+page_content='a: name
+b: age
+c: gender
+d: hobby' metadata={'source': '../data/stu.csv', 'row': 0}
+====================
+page_content='a: 张三01
+b: 21
+c: 男
+d: 吃饭1,rap' metadata={'source': '../data/stu.csv', 'row': 1}
+====================
+page_content='a: 张三02
+b: 22
+c: 男
+d: 吃饭2,rap' metadata={'source': '../data/stu.csv', 'row': 2}
+====================
+page_content='a: 张三03
+b: 23
+c: 女
+d: 吃饭3,rap' metadata={'source': '../data/stu.csv', 'row': 3}
+```
+
+<br>
+
+### 【3.24.5】总结 
+
+1. langchain内置了许多种类的文档加载器：
+   1. 文档加载器均继承于 BaseLoader类； 
+   2. 返回Document类型的对象； 
+   3. load方法一次性批量加载（返回list内含Document对象）， 如内容过多可能list太大，出现内存溢出问题； 
+   4. lazy_load()方法会得到迭代器对象， 可用于for循环依次获取单个Document对象，适用于大文档避免内存存不下的情况；
+2. CSVLoader用于加载csv文件， 加载成功后得到的即 Document对象； 
+
+<br>
+
+---
+
+## 【3.25】langchain组件：JSONLoader
+
+### 【3.25.1】JSONLoader介绍
+
 
 
 

@@ -5,7 +5,7 @@ loader = CSVLoader(
     csv_args={
         "delimiter" : ",", # 指定分隔符
         "quotechar": '"', # 指定带有分隔符文本的引号是单引号还是双引号
-        "fieldnames": ['a', 'b', 'c', 'd'], # 指定表头(但原文件的第一行的表头会被当做数据处理)
+        "fieldnames": ['a', 'b', 'c', 'd'], # 或有，指定表头(但原文件的第一行的表头会被当做数据处理)
     },
     encoding="utf-8"  # 指定编码为utf-8
 )
