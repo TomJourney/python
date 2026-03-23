@@ -3252,36 +3252,94 @@ print(result)
 
 ---
 
-## 【3.28】基于向量检索构建提示词 
+## 【3.28】langchain检索向量并构建提示词 
+
+### 【3.28.1】代码实现
+
+【test_0328_retrieve_vector.py】检索向量
+
+```python
+"""
+提示词：用户的提问 + 向量库中检索到的参考资料
+"""
+
+from langchain_community.chat_models import ChatTongyi
+from langchain_core.vectorstores import InMemoryVectorStore
+from langchain_community.embeddings import DashScopeEmbeddings
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.output_parsers import StrOutputParser
+
+model = ChatTongyi(model="qwen3-max")
+prompt = ChatPromptTemplate.from_messages(
+    [
+        ("system", "以我提供的已知参考资料为主，简洁和专业的回答用户问题，参考资料：{context}"),
+        ("user", "用户提问：{input}")
+    ]
+)
+
+vector_store = InMemoryVectorStore(embedding=DashScopeEmbeddings(model="text-embedding-v4"))
+
+# 准备一下资料（向量库的数据）
+# add_texts 传入一个list[str]
+vector_store.add_texts(
+    [
+        "减肥就是要少吃多练",
+        "在减脂期间吃东西很重要，清淡少油控制卡路里舍摄入并运动起来",
+        "跑步是很好的运动哦"
+    ]
+)
+input_text = "怎么减肥？"
 
 
+# 检索向量库
+result = vector_store.similarity_search(input_text, 2)
+reference_text = "["
+for doc in result:
+    reference_text += doc.page_content
+reference_text += "]"
 
+# 打印参考资料
+print("参考资料=", reference_text)
 
+def print_prompt(prompt):
+    print(prompt.to_string())
+    print("="*20)
+    return prompt
 
+# 创建 chain对象
+chain = prompt | print_prompt | model | StrOutputParser()
+invoke_result = chain.invoke({"input": input_text, "context":reference_text})
+print(invoke_result)
+```
 
+【运行结果】
 
+```c++
+参考资料= [减肥就是要少吃多练在减脂期间吃东西很重要，清淡少油控制卡路里舍摄入并运动起来]
+System: 以我提供的已知参考资料为主，简洁和专业的回答用户问题，参考资料：[减肥就是要少吃多练在减脂期间吃东西很重要，清淡少油控制卡路里舍摄入并运动起来]
+Human: 用户提问：怎么减肥？
+====================
+减肥的关键在于“少吃多练”：  
+1. **饮食方面**：选择清淡、少油的食物，严格控制每日热量摄入；  
+2. **运动方面**：坚持规律运动，增加热量消耗。  
 
+通过合理控制饮食与积极运动相结合，才能有效减脂。
+```
 
+<br>
 
+### 【3.28.2】总结 
 
+1. 向量存储的实例， 通过 add_texts(list[str]) 方法可以快速添加到向量存储中； 
+2. 流程：
+   1. 先通过向量存储检索匹配信息；
+   2. 将用户提问和匹配信息一同封装到提示词模版中提问模型； 
 
+<br>
 
+---
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+## 【3.29】
 
 
 
