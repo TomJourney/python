@@ -3478,13 +3478,38 @@ Human: 用户提问：怎么减肥？
 
 ---
 
+# 【4】rag实战项目
 
+## 【4.1】rag项目案例介绍
 
+### 【4.1.1】rag回顾
 
+1. <font color=red>rag即检索，增强，生成，其主要分为2条线，包括离线处理+在线处理</font>：
+   1. 离线处理：向私有知识库（向量存储）源源不断添加私有知识文档：
+      1. 向知识库添加来自未来的知识文档（基于模型训练完成时间）；
+      2. 向模型添加私有知识文档；
+      3. 给出模型参考资料，规避模型幻觉（一本正经的胡说八道）
+   2. 在线处理：用户提问会基于私有知识库做检索，获取参考资料，同步组装新提示词询问大模型获取结果；
 
+![rag_review](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/img/rag_review.png)
 
+<br>
 
+### 【4.1.2】项目需求和思路
 
+1. 本次项目以某东商品衣服为例，以衣服属性构建本地知识。
+2. 使用者可以<font color=red>自由更新</font>本地知识，用户问题的答案也是<font color=red>基于本地知识</font>生成的；
+
+![rag_online_offline2](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/img/rag_online_offline2.png)
+
+3. 项目主要实现如下代码文件：
+
+![rag_proj_files](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/img/rag_proj_files.png)
+
+<br>
+---
+
+## 【4.2】rag项目-文本上传web服务
 
 
 
