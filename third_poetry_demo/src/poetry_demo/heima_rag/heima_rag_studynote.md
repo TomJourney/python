@@ -3339,9 +3339,144 @@ Human: 用户提问：怎么减肥？
 
 ---
 
-## 【3.29】
+## 【3.29】langchain框架的RunnablePassthrough的使用
 
+### 【3.29.1】RunnablePassthrough的使用
 
+【检索向量库代码回顾】
+
+```python
+prompt = ChatPromptTemplate.from_messages(
+    [
+        ("system", "以我提供的已知参考资料为主，简洁和专业的回答用户问题，参考资料：{context}"),
+        ("user", "用户提问：{input}")
+    ]
+)
+
+# 准备一下资料（向量库的数据）
+# add_texts 传入一个list[str]
+vector_store.add_texts(
+    [
+        "减肥就是要少吃多练",
+        "在减脂期间吃东西很重要，清淡少油控制卡路里舍摄入并运动起来",
+        "跑步是很好的运动哦"
+    ]
+)
+input_text = "怎么减肥？"
+
+# 检索向量库，生成提示词 
+result = vector_store.similarity_search(input_text, 2)
+reference_text = "["
+for doc in result:
+    reference_text += doc.page_content
+reference_text += "]"
+
+# 打印参考资料
+print("参考资料=", reference_text)
+
+def print_prompt(prompt):
+    print(prompt.to_string())
+    print("="*20)
+    return prompt
+
+# 创建 chain对象
+chain = prompt | print_prompt | model | StrOutputParser()
+# 生成的提示词，用于调用llm
+invoke_result = chain.invoke({"input": input_text, "context":reference_text})
+print(invoke_result)
+```
+
+【问题】是否可以把向量检索加入到langchain链中； 即把vector_store.similarity_search(..)调用过程加入到链中； 
+
+- 使用 RunnablePassthrough 类来实现； 
+
+<br>
+
+---
+
+### 【3.29.2】RunnablePassthrough代码实现向量检索入链
+
+【test_0329_runnable_passthrough_baseuse.py】RunnablePassthrough基本使用 
+
+```python
+# RunnablePassthrough代码实现向量检索入链
+from langchain_community.chat_models import ChatTongyi
+from langchain_core.runnables import RunnablePassthrough
+from langchain_core.vectorstores import InMemoryVectorStore
+from langchain_community.embeddings import DashScopeEmbeddings
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.output_parsers import StrOutputParser
+
+model = ChatTongyi(model="qwen3-max")
+prompt = ChatPromptTemplate.from_messages(
+    [
+        ("system", "以我提供的已知参考资料为主，简洁和专业的回答用户问题，参考资料：{context}"),
+        ("user", "用户提问：{input}")
+    ]
+)
+
+vector_store = InMemoryVectorStore(embedding=DashScopeEmbeddings(model="text-embedding-v4"))
+
+# 准备一下资料（向量库的数据）
+# add_texts 传入一个list[str]
+vector_store.add_texts(
+    [
+        "减肥就是要少吃多练",
+        "在减脂期间吃东西很重要，清淡少油控制卡路里舍摄入并运动起来",
+        "跑步是很好的运动哦"
+    ]
+)
+input_text = "怎么减肥？"
+
+# langchain中向量存储对象，有一个方法：as_retriever，可以返回一个Runnable接口的子类实例对象
+# retriever 是Runnable接口的子类对象，它就可以入链
+retriever = vector_store.as_retriever(search_kwargs={"k":2})
+
+def print_prompt(prompt):
+    print(prompt.to_string())
+    print("="*20)
+    return prompt
+
+# 自定义格式化函数
+def format_func(docs):
+    if not docs:
+        return "无相关参考资料"
+    formatted_str = "["
+    for doc in docs:
+        formatted_str += doc.page_content
+    return formatted_str + "]"
+
+# 创建chain
+# chain = retriever | prompt | model | StrOutputParser()
+chain = ( {"input": RunnablePassthrough(), "context": retriever | format_func}
+         | prompt | print_prompt | model | StrOutputParser() )
+"""
+retriever: 
+    - 输入： 用户提问        str
+    - 输出： 向量库的检索结果 list[Document]
+prompt: 
+    - 输入： 用户提问 + 向量库的检索结果  dict
+    - 输出： 完整的提示词               PromptValue 
+"""
+result = chain.invoke(input_text)
+print("大模型回复结果=====\n", result)
+```
+
+【运行结果】
+
+```c++
+System: 以我提供的已知参考资料为主，简洁和专业的回答用户问题，参考资料：[减肥就是要少吃多练在减脂期间吃东西很重要，清淡少油控制卡路里舍摄入并运动起来]
+Human: 用户提问：怎么减肥？
+====================
+大模型回复结果=====
+ 减肥的关键在于“少吃多练”：  
+1. **饮食控制**：选择清淡、少油的食物，严格控制每日卡路里摄入；  
+2. **坚持运动**：通过规律锻炼增加热量消耗，促进脂肪燃烧。  
+```
+
+<br>
+
+---
 
 
 

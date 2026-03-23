@@ -29,8 +29,7 @@ vector_store.add_texts(
 )
 input_text = "怎么减肥？"
 
-
-# 检索向量库
+# 检索向量库，生成提示词
 result = vector_store.similarity_search(input_text, 2)
 reference_text = "["
 for doc in result:
@@ -47,5 +46,6 @@ def print_prompt(prompt):
 
 # 创建 chain对象
 chain = prompt | print_prompt | model | StrOutputParser()
+# 生成的提示词，用于调用llm
 invoke_result = chain.invoke({"input": input_text, "context":reference_text})
 print(invoke_result)
