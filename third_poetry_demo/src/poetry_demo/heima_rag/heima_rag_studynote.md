@@ -3517,7 +3517,9 @@ Human: 用户提问：怎么减肥？
 
 <br>
 
-【】
+### 【4.2.2】基于Streamlit 完成web网页上传服务
+
+【app_file_uploader.py】
 
 ```python
 """
@@ -3553,6 +3555,14 @@ if upload_file is not None:
 
 # 命令行运行：  streamlit run app_file_uploader.py 打开浏览器查看页面效果
 ```
+
+运行效果：
+
+![file_upload_page](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/img/file_upload_page.png)
+
+<br>
+
+---
 
 
 
