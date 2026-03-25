@@ -30,3 +30,5 @@ if upload_file is not None:
     st.write(text)
 
 # 命令行运行：  streamlit run app_file_uploader.py 打开浏览器查看页面效果
+
+print("hello world.")
