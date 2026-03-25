@@ -16,7 +16,7 @@ def check_md5(md5_str: str):
         open(config.md5_path, 'w', encoding="utf-8").close()
         return False
     else:
-        for line in open(config.md5_path, 'r', encoding="utf-8").readline():
+        for line in open(config.md5_path, 'r', encoding="utf-8").readlines():
             line = line.strip() # 处理字符串前后的空格和回车
             if line == md5_str:
                 return True # 已处理过
@@ -47,3 +47,17 @@ class KnowledgeBaseService(object):
 
     def upload_by_str(self, data, filename):
         """将传入的字符串"""
+
+# md5是加签算法，无论字符串多长，都能够得到固定长度（如32位）的16进制字符串
+if __name__ == '__main__':
+    r1 = get_string_md5("张三01")
+    r2 = get_string_md5("张三01")
+    r3 = get_string_md5("张三03")
+
+    print(r1)
+    print(r2)
+    print(r3)
+
+    print("保存并检查md5字符串")
+    save_md5(r1)
+    print(check_md5(r1))
