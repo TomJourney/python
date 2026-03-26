@@ -3824,7 +3824,13 @@ print(f'上传了{st.session_state["counter"]}个文件')
 
 ---
 
+## 【4.6】rag项目-在线流程向量存储服务
 
+### 【4.6.1】在线流程向量存储思路
+
+![online_vector_store](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/img/online_vector_store.png)
+
+<br>
 
 
 
