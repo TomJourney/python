@@ -4170,17 +4170,53 @@ if prompt:
 ```
 
 【页面效果】
+<br>
 
+---
 
+# 【5】Agent智能体
 
+## 【5.1】agent简介
 
+1. 智能体：是一种能够自主规划，决策，执行任务的组件，核心是让大模型根据任务需求，选择并调用工具，完成单靠模型自身无法解决的复杂问题；
+   1. 没有agent：大模型只能基于自身训练数据回答问题，遇到需要实时数据，复杂计算，外部工具调用的场景就会卡壳；
+   2. 有agent：大模型就像一个指挥官，能够思考任务步骤-> 选择合适工具 -> 执行工具调用 -> 根据结果调整策略，直到完成任务；
 
+![langchain_agent](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/agent/img/langchain_agent.png)
 
+2. agent核心特点：
+   1. 目标驱动：围绕用户的具体任务目标展开工作；
+   2. 工具调用能力：能够连接外部工具，弥补大模型的局限性；
+   3. 自主决策与迭代： 不需要人工干预，能够根据工具返回的结果，判断是否需要继续调用工具，或直接生成最终答案；
+3. <font color=red>普通大模型，类似于普通执行链</font>；
 
+<br>
 
+### 【5.1.1】例：电商商品问答
 
+![agent_ex_dianshang](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/agent/img/agent_ex_dianshang.png)
 
+### 【5.1.2】大模型与agent区别
 
+| 普通大模型（或langchain）                           | agent                                                       |
+| --------------------------------------------------- | ----------------------------------------------------------- |
+| 执行流程<font color=red>固定</font>，按预设步骤运行 | 执行流程<font color=red>动态</font>，根据任务和结果自主调整 |
+| 工具调用路径写死在代码里                            | 工具选择LLM思考决定                                         |
+| 适合简单，标准化任务                                | 适合复杂，多步骤，需要决策的任务                            |
+
+<br>
+
+### 【5.1.3】agent总结
+
+1. agent智能体=大模型 + 工具集（手脚） + 决策逻辑（思维）
+   1. 或者说：<font color=red>agent是大模型的代理</font>；
+2. <font color=red>Agent：是让大模型从只会问答升级为会做事（影响现实世界）的智能助手</font>；
+
+<br>
+
+---
+
+## 【5.2】
 
 
 
