@@ -19,3 +19,6 @@ chat_model_name = "qwen3-max"
 
 # size recommend
 collection_size_recommend = "size_recommend_coll"
+
+# session id
+session_id = "user001"
