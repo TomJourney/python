@@ -9,6 +9,7 @@ import time
 import streamlit as st
 
 from poetry_demo.heima_rag.ragproj.update_knowledge_base import KnowledgeBaseService
+import config_data as config
 
 # 添加网页标题
 st.title("知识库更新服务")
@@ -24,7 +25,7 @@ upload_file = st.file_uploader(
 if "counter" not in st.session_state:
     st.session_state["counter"] = 0
 if "service" not in st.session_state:
-    st.session_state["service"] = KnowledgeBaseService()
+    st.session_state["service"] = KnowledgeBaseService(config.collection_size_recommend)
 
 if upload_file is not None:
     # 提取文件信息

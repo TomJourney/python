@@ -3871,7 +3871,101 @@ if __name__ == "__main__":
 
 ## 【4.7】rag项目-rag服务核心代码
 
-### 【4.7.1】
+【rag.py】检索增强生成-简单版 
+
+```python
+from langchain_core.documents import Document
+from langchain_core.output_parsers import StrOutputParser
+from langchain_core.runnables import RunnablePassthrough
+
+from vector_stores import VectorStoreService
+from langchain_community.embeddings import DashScopeEmbeddings
+import config_data as config
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_community.chat_models.tongyi import ChatTongyi
+
+def print_prompt(prompt):
+    print("="*20)
+    print(prompt.to_string())
+    print("="*20)
+    return prompt
+
+class RagService(object):
+    def __init__(self):
+        # 向量服务：用于检索
+        self.vector_service = VectorStoreService(
+            embedding=DashScopeEmbeddings(model=config.embedding_model_name),
+            collection_name=config.collection_size_recommend,
+        )
+        self.prompt_template = ChatPromptTemplate.from_messages(
+            [
+                ("system", "以我提供的已知参考资料为主，简洁和专业的回答用户问题。参考资料：{context}"),
+                ("user", "请回答用户提问:{input}")
+            ]
+        )
+        self.chat_model = ChatTongyi(model=config.chat_model_name)
+        self.chain = self.__get_chain()
+
+    def __get_chain(self):
+        # 获取检索器对象
+        retriever = self.vector_service.get_retriever()
+
+        def format_document(docs: list[Document]):
+            if not docs:
+                return "无相关参考资料"
+
+            formatted_str  =""
+            for doc in docs:
+                formatted_str += f"文档片段:{doc.page_content}\n文档元数据: {doc.metadata}\n\n"
+
+            return formatted_str
+
+        chain = (
+            {
+                "input": RunnablePassthrough(),
+                "context":retriever | format_document
+            } | self.prompt_template | print_prompt | self.chat_model | StrOutputParser()
+        )
+        return chain
+
+if __name__ == "__main__":
+    result = RagService().chain.invoke("我体重180斤，尺码推荐")
+    print(result)
+
+```
+
+<br>
+
+【<font color=red>模型回复效果</font>】
+
+```c++
+====================
+System: 以我提供的已知参考资料为主，简洁和专业的回答用户问题。参考资料：文档片段:身高：155-165cm, 体重75-95斤，建议尺码S.
+身高：160-170cm, 体重90-115斤，建议尺码M.
+身高：165-175cm, 体重115-135斤，建议尺码L.
+身高：170-178cm, 体重130-150斤，建议尺码XL.
+身高：175-182cm, 体重145-165斤，建议尺码2XL.
+身高：178-185cm, 体重160-180斤，建议尺码3XL.
+身高：180-190cm, 体重180-210斤，建议尺码4XL.
+身高：190cm+，建议尺码5XL.
+文档元数据: {'create_time': '2026-03-29 10:01:18', 'source': '尺码推荐.txt', 'operator': 'tom'}
+
+
+Human: 请回答用户提问:我体重180斤，尺码推荐
+====================
+根据您提供的体重180斤，结合参考资料中的尺码推荐：
+
+- 若您的身高在180–190cm之间，建议选择 **4XL**；
+- 若您的身高在178–185cm之间，也可考虑 **3XL**，但接近上限。
+
+为更准确推荐，请提供您的身高信息。若身高≥190cm，则建议选择 **5XL**。
+```
+
+
+
+---
+
+## 【4.8】
 
 
 

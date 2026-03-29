@@ -19,6 +19,7 @@ class RagService(object):
         # 向量服务：用于检索
         self.vector_service = VectorStoreService(
             embedding=DashScopeEmbeddings(model=config.embedding_model_name),
+            collection_name=config.collection_size_recommend,
         )
         self.prompt_template = ChatPromptTemplate.from_messages(
             [
@@ -52,5 +53,5 @@ class RagService(object):
         return chain
 
 if __name__ == "__main__":
-    result = RagService().chain.invoke("我身高170厘米，尺码推荐")
+    result = RagService().chain.invoke("我体重180斤，尺码推荐")
     print(result)

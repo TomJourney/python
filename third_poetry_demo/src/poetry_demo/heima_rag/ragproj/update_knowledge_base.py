@@ -45,12 +45,12 @@ def get_string_md5(input_str: str, encoding="utf-8"):
     return md5_hex
 
 class KnowledgeBaseService(object):
-    def __init__(self):
+    def __init__(self, collection_name):
         # 若文件夹不存在则创建，否则跳过
         os.makedirs(config.persist_directory, exist_ok = True)
 
         self.chroma = Chroma(
-            collection_name=config.collection_name, # 数据库表名
+            collection_name=collection_name, # 数据库表名
             embedding_function=DashScopeEmbeddings(model="text-embedding-v4"),
             persist_directory=config.persist_directory, # 数据库本地存储文件夹
         ) # 向量存储的实力 Chroma向量数据库
@@ -61,7 +61,7 @@ class KnowledgeBaseService(object):
             length_function=len,  # 使用python自带的len函数做长度统计的依据
         ) # 文本分割器对象
 
-    def upload_by_str(self, data, filename):
+    def upload_by_str(self, data : str, filename):
         """将传入的字符串，进行向量化，存入向量数据库中"""
         # 先得到传入字符串的md5值
         md5_hex = get_string_md5(data, encoding = "utf-8")
@@ -79,7 +79,7 @@ class KnowledgeBaseService(object):
             "create_time": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
             "operator":"tom"
         }
-        # 内存加载到向量库
+        # 内容加载到向量库
         self.chroma.add_texts(
             # iterable -> list \ tuple
             knowledge_chunks,

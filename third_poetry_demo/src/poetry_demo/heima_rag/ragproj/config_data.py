@@ -16,3 +16,6 @@ similarity_threshold = 2 # 检索返回匹配的文档数量
 #
 embedding_model_name = "text-embedding-v4"
 chat_model_name = "qwen3-max"
+
+# size recommend
+collection_size_recommend = "size_recommend_coll"
