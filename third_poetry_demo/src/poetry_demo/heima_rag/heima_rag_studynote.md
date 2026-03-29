@@ -4281,7 +4281,15 @@ for msg in result["messages"]:
 
 ---
 
-## 【5.3】
+## 【5.3】agent的流式输出
+
+### 【5.3.1】agent的stream流
+
+1. 通过create_agent方法可以创建agent对象， 其也是 Runnable接口的子类实现， 所以也拥有：
+   1. invoke: 执行，一次性得到完整结果；  
+   2. <font color=red>stream: 执行， 流式得到结果</font>；  
+
+
 
 
 
