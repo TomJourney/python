@@ -4346,7 +4346,32 @@ AIMessage 传智教育的当前股价是 **20元**。
 
 ---
 
-【5.4】
+## 【5.4】agent的ReAct行动框架
+
+### 【5.4.1】ReAct介绍
+
+1. <font color=red>ReAct：一种大模型智能体的核心思考与行动框架，全称 Reasoning + Acting（推理+行动），是让agent像人类一样 “思考问题 -> 制定策略 -> 执行行动 -> 验证结果” 的关键逻辑</font>； 
+2. 简单来说， ReAct让agent不再是“直接回答问题”，而是通过“自然语言思考过程”指导工具调用，一步步解决复杂问题，完美适配需要多步推理，工具协作的场景（如智能客服，报告生成，任务规划等）
+3. 一个典型的ReAct范式的Agent如图所示：
+   1. <font color=red>思考Reasoning： 分析问题，判断现有信息是否足够，明确下一步</font>；
+      1. 即模型决策是否需要调用外部工具获取更多信息来回答； 
+   2. <font color=red>行动Action： 执行思考阶段指定的策略</font>；
+      1. 即基于模型决策结果，调用工具获取信息；  
+   3. <font color=red>观察Observation：获取行动的结果，提取有效信息</font>；
+      1. 即获取工具返回值，判断工具是否正常工作，为下一轮思考提供信息；
+   4. 总结：（再）思考 -> （再）行动 -> （再）观察 -> 循环往复直到结束 ； 
+
+![agent-react](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/agent/img/agent-react.png)
+
+<br>
+
+---
+
+### 【5.4.2】langchain的ReAct框架
+
+1. langchain的Agent对象遵循ReAct框架要求，在执行过程中会持续自我思考，自我行动，自我观察；
+
+
 
 
 
