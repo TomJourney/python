@@ -5311,6 +5311,142 @@ def fetch_external_data(user_id: str, month: str) -> str :
 
 ## 【6.7】agent项目-中间件和agent创建
 
+【react_agent.py】react_agent代码实现 
+
+```python
+from langchain.agents import create_agent
+
+from poetry_demo.heima_rag.agent_proj.model.model_factory import chat_model
+from poetry_demo.heima_rag.agent_proj.utils.prompts_loader import load_system_prompts
+from poetry_demo.heima_rag.agent_proj.tools.agent_tools import ( rag_summarize, get_weather, get_user_location,
+                                                                 get_user_id, get_current_month, fetch_external_data, fill_context_for_report)
+from poetry_demo.heima_rag.agent_proj.tools.agent_middleware import monitor_tool, log_before_model, report_prompt_switch
+
+# 基于react模型的agent
+class ReactAgent:
+    def __init__(self):
+        self.agent = create_agent(
+            model = chat_model,
+            system_prompt=load_system_prompts(),
+            tools=[rag_summarize, get_weather, get_user_location, get_user_id, get_current_month, fetch_external_data, fill_context_for_report],
+            middleware=[monitor_tool, log_before_model, report_prompt_switch],
+        )
+
+    def execute_stream(self, query: str):
+        input_dict = {
+            "messages":[
+                {"role":"user", "content": query},
+            ]
+        }
+
+        # 第三个参数context就是上下文runtime中的信息，就是我们做提示词切换的标记
+        for chunk in self.agent.stream(input_dict, stream_mode="values", context={"report":False}):
+            lastest_message = chunk["messages"][-1]
+            # 如果 lastest_message.content 有值，才返回
+            if lastest_message.content:
+                yield lastest_message.content.strip() + "\n"
+
+if __name__ == '__main__':
+    agent = ReactAgent()
+
+    for chunk in agent.execute_stream("扫地机器人在我所在地区的气温下如何保养"):
+        print(chunk, end="", flush=True)
+
+    # for chunk in agent.execute_stream("给我生成我的使用报告"):
+    #     print(chunk, end="", flush=True)
+```
+
+【模型回复结果】
+
+```c++
+扫地机器人在我所在地区的气温下如何保养
+2026-04-05 06:55:28,032 - agent - INFO - agent_middleware.py:44 - log_before_model方法：即将调用模型，带有1条消息
+2026-04-05 06:55:28,032 - agent - INFO - agent_middleware.py:45 - log_before_model方法: HumanMessage 扫地机器人在我所在地区的气温下如何保养
+为了回答您关于扫地机器人在您所在地区气温下的保养问题，我需要先了解您所在的城市，以便获取当地的天气和气温信息。然后，我可以结合这些信息为您提供针对性的保养建议。
+
+首先，我将获取您的位置信息。
+重庆
+2026-04-05 06:55:31,180 - agent - INFO - agent_middleware.py:22 - monitor_tool方法：执行工具=get_user_location
+2026-04-05 06:55:31,180 - agent - INFO - agent_middleware.py:23 - monitor_tool方法：传入参数={}
+2026-04-05 06:55:31,181 - agent - INFO - agent_middleware.py:27 - monitor_tool方法：执行工具=get_user_location调用成功
+2026-04-05 06:55:31,182 - agent - INFO - agent_middleware.py:44 - log_before_model方法：即将调用模型，带有3条消息
+2026-04-05 06:55:31,183 - agent - INFO - agent_middleware.py:45 - log_before_model方法: ToolMessage 重庆
+现在我已经知道您位于重庆。接下来，我需要获取重庆当前的天气和气温信息，以便为您提供针对性的保养建议。
+城市重庆天气为晴天，气温26摄氏度，空气湿度50%，南风1级，AQI指数21，最近6小时降雨概率降低
+2026-04-05 06:55:34,327 - agent - INFO - agent_middleware.py:22 - monitor_tool方法：执行工具=get_weather
+2026-04-05 06:55:34,327 - agent - INFO - agent_middleware.py:23 - monitor_tool方法：传入参数={'city': '重庆'}
+2026-04-05 06:55:34,328 - agent - INFO - agent_middleware.py:27 - monitor_tool方法：执行工具=get_weather调用成功
+2026-04-05 06:55:34,329 - agent - INFO - agent_middleware.py:44 - log_before_model方法：即将调用模型，带有5条消息
+2026-04-05 06:55:34,329 - agent - INFO - agent_middleware.py:45 - log_before_model方法: ToolMessage 城市重庆天气为晴天，气温26摄氏度，空气湿度50%，南风1级，AQI指数21，最近6小时降雨概率降低
+2026-04-05 06:55:37,856 - agent - INFO - agent_middleware.py:22 - monitor_tool方法：执行工具=rag_summarize
+2026-04-05 06:55:37,856 - agent - INFO - agent_middleware.py:23 - monitor_tool方法：传入参数={'query': '扫地机器人在26摄氏度、50%湿度环境下的保养方法'}
+现在我已经获取了重庆的天气信息：晴天，气温26摄氏度，空气湿度50%。接下来，我将查询扫地机器人在这样的环境条件下的保养建议。
+====================
+你是专注于"基于参考资料总结"的AI助手，需结合用户提问和向量检索到的参考资料，生成简洁准确的概括回答。
+
+### 输入信息
+1. 用户提问：扫地机器人在26摄氏度、50%湿度环境下的保养方法
+2. 参考资料(在下一个###之前内容均为参考资料)：
+
+### 严格遵守以下约束（违反将导致回答无效）
+1. 内容合规：禁止包含违法、侵权、攻击性信息；
+2. 事实准确：回答必须完全基于参考资料中的信息，不编造、不添加未提及的内容，不做主观推断；
+3. 语言要求：仅用中文回答，语气客观、简洁，不冗余；
+4. 聚焦提问：严格围绕用户原始提问总结，不扩充问题范围、不额外追问、不构造新query；
+5. 格式要求：仅输出概括内容本身，以纯文本字符串形式呈现，不封装为字典、列表、JSON等任何结构，不附带额外说明。
+
+====================
+2026-04-05 06:55:39,860 - agent - INFO - agent_middleware.py:27 - monitor_tool方法：执行工具=rag_summarize调用成功
+2026-04-05 06:55:39,862 - agent - INFO - agent_middleware.py:44 - log_before_model方法：即将调用模型，带有7条消息
+2026-04-05 06:55:39,862 - agent - INFO - agent_middleware.py:45 - log_before_model方法: ToolMessage 参考资料中未提及扫地机器人在26摄氏度、50%湿度环境下的具体保养方法。
+参考资料中未提及扫地机器人在26摄氏度、50%湿度环境下的具体保养方法。
+由于参考资料中没有直接提供26摄氏度、50%湿度环境下的具体保养方法，我将尝试获取更通用的扫地机器人保养建议，然后结合重庆当前的气候条件为您提供针对性的指导。
+2026-04-05 06:55:43,465 - agent - INFO - agent_middleware.py:22 - monitor_tool方法：执行工具=rag_summarize
+2026-04-05 06:55:43,466 - agent - INFO - agent_middleware.py:23 - monitor_tool方法：传入参数={'query': '扫地机器人日常保养方法和注意事项'}
+====================
+你是专注于"基于参考资料总结"的AI助手，需结合用户提问和向量检索到的参考资料，生成简洁准确的概括回答。
+
+### 输入信息
+1. 用户提问：扫地机器人日常保养方法和注意事项
+2. 参考资料(在下一个###之前内容均为参考资料)：
+
+### 严格遵守以下约束（违反将导致回答无效）
+1. 内容合规：禁止包含违法、侵权、攻击性信息；
+2. 事实准确：回答必须完全基于参考资料中的信息，不编造、不添加未提及的内容，不做主观推断；
+3. 语言要求：仅用中文回答，语气客观、简洁，不冗余；
+4. 聚焦提问：严格围绕用户原始提问总结，不扩充问题范围、不额外追问、不构造新query；
+5. 格式要求：仅输出概括内容本身，以纯文本字符串形式呈现，不封装为字典、列表、JSON等任何结构，不附带额外说明。
+
+====================
+2026-04-05 06:55:47,354 - agent - INFO - agent_middleware.py:27 - monitor_tool方法：执行工具=rag_summarize调用成功
+2026-04-05 06:55:47,355 - agent - INFO - agent_middleware.py:44 - log_before_model方法：即将调用模型，带有9条消息
+2026-04-05 06:55:47,355 - agent - INFO - agent_middleware.py:45 - log_before_model方法: ToolMessage 定期清理滚刷和边刷上的缠绕物，及时清空尘盒并清洗滤网（部分型号支持水洗），检查并清理传感器和充电触点，避免在潮湿或有积水地面使用，确保工作区域无电线、小物件等障碍物，长时间不用时应关闭电源并存放于干燥处。
+定期清理滚刷和边刷上的缠绕物，及时清空尘盒并清洗滤网（部分型号支持水洗），检查并清理传感器和充电触点，避免在潮湿或有积水地面使用，确保工作区域无电线、小物件等障碍物，长时间不用时应关闭电源并存放于干燥处。
+根据获取的信息，结合重庆当前的天气情况（晴天，气温26摄氏度，空气湿度50%），为您提供以下扫地机器人保养建议：
+
+1. **滚刷和边刷清理**：即使在干燥天气下，重庆的日常灰尘和毛发仍然较多，建议每周检查并清理滚刷和边刷上的缠绕物，保持清洁效率。
+
+2. **尘盒与滤网维护**：每次使用后清空尘盒，滤网建议每1-2周清洗一次（如支持水洗），并在完全晾干后再装回。当前50%的湿度环境下，滤网晾干时间约为4-6小时。
+
+3. **传感器与充电触点**：定期用干布擦拭机器人底部和顶部的传感器，以及充电座的金属触点，避免灰尘影响导航或充电效率。
+
+4. **使用环境注意**：虽然当前天气晴朗、湿度适中，但仍需避免在厨房、卫生间等局部潮湿区域使用，以防电机或电路受潮。
+
+5. **存放建议**：若长时间不使用（如外出超过3天），建议将机器人关闭电源，并存放在阴凉干燥处，避免阳光直射导致电池老化。
+
+以上保养措施可帮助您的扫地机器人在重庆当前气候条件下保持良好性能和延长使用寿命。
+```
+
+<br>
+
+---
+
+## 【6.8】agent项目-用户界面开发
+
+
+
+
+
 
 
 
