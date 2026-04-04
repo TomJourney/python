@@ -5090,9 +5090,116 @@ if __name__ == "__main__":
 
 ## 【6.5】rag总结服务开发
 
-### 【6.5.1】
+### 【6.5.1】rag_summarize_service.py
 
-  
+```python
+"""
+rag总结服务类
+  用户提问，搜索参考资料，将提问和参考资料提交给模型，让模型总结回复
+"""
+from langchain_core.documents import Document
+from langchain_core.output_parsers import StrOutputParser
+from langchain_core.prompts import PromptTemplate
+
+from poetry_demo.heima_rag.agent_proj.model.model_factory import chat_model
+from poetry_demo.heima_rag.agent_proj.rag.vector_store import VectorStoreService
+from poetry_demo.heima_rag.agent_proj.utils.prompts_loader import load_rag_prompts
+
+def print_prompt(prompt):
+    print("=" * 20)
+    print(prompt.to_string())
+    print("=" * 20)
+    return prompt
+
+
+class RagSummarizeService(object):
+    def __init__(self):
+        self.vector_store = VectorStoreService()
+        self.retriever = self.vector_store.get_retriever()
+        self.prompt_text = load_rag_prompts()
+        self.prompt_template = PromptTemplate.from_template(self.prompt_text)
+        self.model = chat_model
+        self.chain = self._init_chain()
+
+    def _init_chain(self):
+        chain = self.prompt_template | print_prompt | self.model | StrOutputParser()
+        return chain
+
+    def retrieve_docs(self, query:str) -> list[Document]:
+        return self.retriever.invoke(query)
+
+    def rag_summarize(self, query:str) -> str:
+        # 获取rag检索结果文档列表
+        context_docs  = self.retrieve_docs(query)
+
+        # 参考资料收集结果：字符串类型
+        context = ""
+        counter = 0
+        for doc in context_docs:
+            counter += 1
+            context += f"【参考资料{counter}】: {doc.page_content} | 参考元数据：{doc.metadata}\n"
+
+        return self.chain.invoke(
+            {
+                "input": query,
+                "context": context,
+            }
+        )
+
+if __name__ == "__main__":
+    rag = RagSummarizeService()
+    result = rag.rag_summarize("小户型适合哪些扫地机器人")
+    print(result)
+```
+
+【运行结果】
+
+```  c++
+====================
+你是专注于"基于参考资料总结"的AI助手，需结合用户提问和向量检索到的参考资料，生成简洁准确的概括回答。
+
+### 输入信息
+1. 用户提问：小户型适合哪些扫地机器人
+2. 参考资料(在下一个###之前内容均为参考资料)：【参考资料1】: 扫地/扫拖一体机器人选购指南200条
+
+1. 选购核心：优先明确使用场景，独居小户型侧重轻便灵活，多口之家带宠物需强化吸力和防缠绕功能。
+
+2. 吸力参数：家用建议选择≥3000Pa吸力机型，地毯场景需≥4000Pa，吸力可调节更适配不同地面。
+
+3. 导航技术：激光导航定位精准、抗干扰强，适合复杂户型；视觉导航性价比高，避免强光环境使用。 | 参考元数据：{'source': '/third_poetry_demo/src/poetry_demo/heima_rag/agent_proj/data/选购指南.txt'}
+【参考资料2】: ## 五、选购指南类
+### 选购要素
+39. **选购时最应该关注哪些参数？**
+- 导航类型、吸力大小、电池容量、尘盒/水箱容量。
+40. **小户型适合哪种扫地机器人？**
+- 基础激光导航机型即可，如米家 1C、石头 T4。
+41. **大户型应该注意什么？**
+- 选择大电池(>5200mAh)、自动集尘或自动洗拖布机型。
+42. **有宠物的家庭怎么选？** | 参考元数据：{'trapped': '/False', 'company': '', 'total_pages': 8, 'title': '', 'page': 3, 'source': '/third_poetry_demo/src/poetry_demo/heima_rag/agent_proj/data/扫地机器人100问.pdf', 'author': '喵喵', 'moddate': '2025-08-06T15:41:17+08:00', 'keywords': '', 'creationdate': '2025-08-06T15:41:17+08:00', 'page_label': '4', 'creator': 'WPS 文字', 'producer': '', 'sourcemodified': "D:20250806154117+08'00'", 'subject': '', 'comments': ''}
+【参考资料3】: 71. **租房党、小户型适合什么清扫模式？**
+- 开启“一键清扫”或“迷你清扫”模式，设置定时清扫，每天短时间清扫，保证地面干净。
+72. **机器人可以清理宠物猫砂、狗砂吗？**
+- 可清理轻微散落的猫砂、狗砂，调至大吸力模式，避免大颗粒猫砂卡入滚刷，及时清理尘盒。
+73. **厨房地面有油污怎么清理？** | 参考元数据：{'source': '/third_poetry_demo/src/poetry_demo/heima_rag/agent_proj/data/扫地机器人100问2.txt'}
+
+
+### 严格遵守以下约束（违反将导致回答无效）
+1. 内容合规：禁止包含违法、侵权、攻击性信息；
+2. 事实准确：回答必须完全基于参考资料中的信息，不编造、不添加未提及的内容，不做主观推断；
+3. 语言要求：仅用中文回答，语气客观、简洁，不冗余；
+4. 聚焦提问：严格围绕用户原始提问总结，不扩充问题范围、不额外追问、不构造新query；
+5. 格式要求：仅输出概括内容本身，以纯文本字符串形式呈现，不封装为字典、列表、JSON等任何结构，不附带额外说明。
+
+====================
+小户型适合选择基础激光导航机型，如米家 1C、石头 T4；建议吸力≥3000Pa，支持一键清扫或迷你清扫模式，并可设置定时清扫。
+
+```
+
+<br>
+
+---
+
+
 
 
 
