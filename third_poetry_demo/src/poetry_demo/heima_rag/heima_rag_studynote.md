@@ -5329,33 +5329,3 @@ def fetch_external_data(user_id: str, month: str) -> str :
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
