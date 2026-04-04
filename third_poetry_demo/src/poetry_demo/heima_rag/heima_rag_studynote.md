@@ -4627,7 +4627,57 @@ AIMessage :  **观察**：深圳今天的天气是晴天。
 
 ---
 
-## 【5.6】ageng智能体项目介绍
+# 【6】ageng智能体项目
+
+## 【6.1】智能体项目介绍
+
+### 【6.1.1】智能体项目介绍
+
+1. <font color=red>智扫通agent项目：是一个面向消费者（toc）的智能客服系统，旨在为用户提供全周期的扫地机器人相关服务</font>；
+   1. <font color=red>智能问答服务</font>：
+      1. 处理购买前的产品咨询（如功能，价格，对比等）
+      2. 解决购买后的使用问题（如操作指导，故障处理，维护建议等）
+      3. 基于rag技术，从知识库中检索准确信息并生成自然语言回答，确保响应及时且可靠； 
+   2. <font color=red>使用报告与优化建议生成</font>：
+      1. 针对已购买用户，自动分析扫地机器人的使用数据（如清洁频率，耗材状态，错误日志等）
+      2. 生成个性化报告，总结使用情况并提供优化建议（如清洁计划调整，部件更换提醒等）
+      3. 支持用户主动查询报告或系统定期推送，帮助用户最大化产品价值； 
+
+2. agent智能体项目：
+   1. 数据集：rag知识库，共6份数据集； 
+
+### 【6.1.2】项目骨架
+
+![agent_proj_overview](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/agent/img/agent_proj_overview.png)
+
+<br>
+
+---
+
+## 【6.2】agent项目-日志和路径工具开发
+
+1. 日志与路径工具：
+   1. config_handler: 配置文件处理
+   2. file_handler: 文件处理工具
+   3. logger_handler: 日志工具 
+   4. path_tool : 路径工具 
+   5. prompt_loader ： 提示词加载工具 ； 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
