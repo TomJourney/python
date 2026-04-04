@@ -5060,12 +5060,12 @@ if __name__ == "__main__":
         print(entry.page_content)
         print("."*20)
 
-# 2026-04-04 18:30:35,734 - agent - INFO - vector_store.py:74 - 加载知识库： /Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/agent_proj/data/选购指南.txt内存已经存在知识库内，跳过
-# 2026-04-04 18:30:35,734 - agent - INFO - vector_store.py:74 - 加载知识库： /Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/agent_proj/data/扫地机器人100问2.txt内存已经存在知识库内，跳过
-# 2026-04-04 18:30:35,735 - agent - INFO - vector_store.py:74 - 加载知识库： /Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/agent_proj/data/故障排除.txt内存已经存在知识库内，跳过
-# 2026-04-04 18:30:35,735 - agent - INFO - vector_store.py:74 - 加载知识库： /Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/agent_proj/data/扫拖一体机器人100问.txt内存已经存在知识库内，跳过
-# 2026-04-04 18:30:35,735 - agent - INFO - vector_store.py:74 - 加载知识库： /Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/agent_proj/data/维护保养.txt内存已经存在知识库内，跳过
-# 2026-04-04 18:30:35,736 - agent - INFO - vector_store.py:74 - 加载知识库： /Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/agent_proj/data/扫地机器人100问.pdf内存已经存在知识库内，跳过
+# 2026-04-04 18:30:35,734 - agent - INFO - vector_store.py:74 - 加载知识库： /third_poetry_demo/src/poetry_demo/heima_rag/agent_proj/data/选购指南.txt内存已经存在知识库内，跳过
+# 2026-04-04 18:30:35,734 - agent - INFO - vector_store.py:74 - 加载知识库： /third_poetry_demo/src/poetry_demo/heima_rag/agent_proj/data/扫地机器人100问2.txt内存已经存在知识库内，跳过
+# 2026-04-04 18:30:35,735 - agent - INFO - vector_store.py:74 - 加载知识库： /third_poetry_demo/src/poetry_demo/heima_rag/agent_proj/data/故障排除.txt内存已经存在知识库内，跳过
+# 2026-04-04 18:30:35,735 - agent - INFO - vector_store.py:74 - 加载知识库： /third_poetry_demo/src/poetry_demo/heima_rag/agent_proj/data/扫拖一体机器人100问.txt内存已经存在知识库内，跳过
+# 2026-04-04 18:30:35,735 - agent - INFO - vector_store.py:74 - 加载知识库： /third_poetry_demo/src/poetry_demo/heima_rag/agent_proj/data/维护保养.txt内存已经存在知识库内，跳过
+# 2026-04-04 18:30:35,736 - agent - INFO - vector_store.py:74 - 加载知识库： third_poetry_demo/src/poetry_demo/heima_rag/agent_proj/data/扫地机器人100问.pdf内存已经存在知识库内，跳过
 # ---------- rag检索结果如下： ----------
 # 3. **什么是 dToF 导航技术？**
 # - 直接飞行时间测距(direct Time-of-Flight)，比传统 LDS 测距更精准，探测距离可达 10 米。
@@ -5087,6 +5087,12 @@ if __name__ == "__main__":
 <br>
 
 ---
+
+## 【6.5】rag总结服务开发
+
+### 【6.5.1】
+
+  
 
 
 
