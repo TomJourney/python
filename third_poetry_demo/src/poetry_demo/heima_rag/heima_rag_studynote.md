@@ -4663,9 +4663,113 @@ AIMessage :  **观察**：深圳今天的天气是晴天。
    4. path_tool : 路径工具 
    5. prompt_loader ： 提示词加载工具 ； 
 
+【路径工具】path_tool.py
 
+```python
+"""
+为整个工程提供统一的绝对路径 
+"""
 
+import os
 
+def get_project_root() -> str:
+    """
+    获取工程所在的根目录
+    """
+    # 当前文件的绝对路径 （__file__是python常量，表明当前文件）
+    current_file_abs_path = os.path.abspath(__file__)
+    # 获取工程的根目录，先获取文件所在文件夹绝对路径
+    current_dir = os.path.dirname(current_file_abs_path)
+    # 获取工程根目录
+    project_root = os.path.dirname(current_dir)
+
+    return project_root
+
+def get_abs_path(relative_path: str) -> str:
+    """
+    传递相对路径：返回绝对路径
+    :param relative_path:
+    :return:
+    """
+    project_root = get_project_root()
+    return os.path.join(project_root, relative_path)
+
+if __name__ == "__main__":
+    print(get_abs_path("data/故障排除.txt"))
+    # /third_poetry_demo/src/poetry_demo/heima_rag/agent_proj/data/故障排除.txt
+```
+
+【日志工具】logger_handler.py
+
+```python
+# 日志工具
+import logging
+import os
+from datetime import datetime
+
+from poetry_demo.heima_rag.agent_proj.utils.path_tool import get_abs_path
+
+# 日志保存的根目录
+LOG_ROOT = get_abs_path("logs")
+# 确保日志的目录存在
+os.makedirs(LOG_ROOT, exist_ok=True)
+
+# 日志的格式配置： error info debug
+DEFAULT_LOG_FORMAT = logging.Formatter(
+    "%(asctime)s - %(name)s - %(levelname)s - %(filename)s:%(lineno)d - %(message)s"
+)
+
+# 获取日志记录器
+#  控制台打印日志级别 大于等于 logging.INFO  的日志
+#  文件记录 日志级别 大于等于  logging.DEBUG 的日志
+def get_logger(name: str = "agent",
+               console_level: int = logging.INFO,
+               file_level: int = logging.DEBUG,
+               log_file = None,
+) -> logging.Logger:
+    logger = logging.getLogger(name)
+    logger.setLevel(logging.DEBUG)
+
+    #  避免重复添加handler
+    if logger.handlers :
+        return logger
+
+    # 控制台Handler
+    console_handler = logging.StreamHandler()
+    console_handler.setLevel(console_level)
+    console_handler.setFormatter(DEFAULT_LOG_FORMAT)
+
+    logger.addHandler(console_handler)
+
+    # 文件handler
+    if not log_file: # 日志文件的存放路径
+        log_file = os.path.join(LOG_ROOT, f"{name}_{datetime.now().strftime('%Y%m%d')}.log")
+
+    file_handler = logging.FileHandler(log_file, encoding="utf-8")
+    file_handler.setLevel(file_level)
+    file_handler.setFormatter(DEFAULT_LOG_FORMAT)
+
+    logger.addHandler(file_handler)
+
+    return logger
+
+# 快捷获取日志器
+logger = get_logger()
+
+# 测试
+if __name__ == "__main__":
+    logger.info("信息日志")
+    logger.error("错误日志")
+    logger.warning("警告日志")
+    logger.debug("调试日志")
+# 2026-04-04 16:37:19,100 - agent - INFO - logger_handler.py:57 - 信息日志
+# 2026-04-04 16:37:19,100 - agent - ERROR - logger_handler.py:58 - 错误日志
+# 2026-04-04 16:37:19,100 - agent - WARNING - logger_handler.py:59 - 警告日志
+```
+
+<br>
+
+---
 
 
 
