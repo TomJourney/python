@@ -7,7 +7,7 @@ import os
 from langchain_community.document_loaders import PyPDFLoader, TextLoader
 from langchain_core.documents import Document
 
-from logger_handler import logger
+from poetry_demo.heima_rag.agent_proj.utils.logger_handler import logger
 
 # 获取文件的md5的16进制字符串
 def get_file_md5_hex(file_path:str):
@@ -52,5 +52,5 @@ def pdf_loader(filepath: str, passwd=None) -> list[Document]:
 
 # 加载text文档
 def txt_loader(filepath: str) -> list[Document]:
-    return TextLoader(filepath).load()
+    return TextLoader(filepath, encoding="utf-8").load()
 

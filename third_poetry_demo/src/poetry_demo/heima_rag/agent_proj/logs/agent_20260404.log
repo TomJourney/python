@@ -204,3 +204,26 @@
 1. 根据查询回来的信息，使用中文生成一份报告，遵循MarkDown语法，并根据使用情况给出具体建议，不要将查询回来的内容直接输出。
 2. 标题为扫地机器人使用情况报告与保养建议。
 
+2026-04-04 18:23:24,272 - agent - ERROR - file_handler.py:42 - [listdir_with_allowed_type]-data不是文件夹
+2026-04-04 18:23:24,272 - agent - ERROR - file_handler.py:15 - [md5计算]，文件txt不存在
+2026-04-04 18:23:24,272 - agent - WARNING - vector_store.py:80 - 加载知识库：txt内没有有效文本内容，跳过
+2026-04-04 18:23:24,272 - agent - ERROR - file_handler.py:15 - [md5计算]，文件pdf不存在
+2026-04-04 18:23:24,272 - agent - WARNING - vector_store.py:80 - 加载知识库：pdf内没有有效文本内容，跳过
+2026-04-04 18:25:09,297 - agent - INFO - vector_store.py:94 - 加载知识库： /Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/agent_proj/data/选购指南.txt加载成功
+2026-04-04 18:25:14,062 - agent - INFO - vector_store.py:94 - 加载知识库： /Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/agent_proj/data/扫地机器人100问2.txt加载成功
+2026-04-04 18:25:22,110 - agent - INFO - vector_store.py:94 - 加载知识库： /Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/agent_proj/data/故障排除.txt加载成功
+2026-04-04 18:25:26,533 - agent - INFO - vector_store.py:94 - 加载知识库： /Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/agent_proj/data/扫拖一体机器人100问.txt加载成功
+2026-04-04 18:25:30,756 - agent - INFO - vector_store.py:94 - 加载知识库： /Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/agent_proj/data/维护保养.txt加载成功
+2026-04-04 18:25:33,968 - agent - INFO - vector_store.py:94 - 加载知识库： /Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/agent_proj/data/扫地机器人100问.pdf加载成功
+2026-04-04 18:30:10,603 - agent - INFO - vector_store.py:74 - 加载知识库： /Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/agent_proj/data/选购指南.txt内存已经存在知识库内，跳过
+2026-04-04 18:30:10,603 - agent - INFO - vector_store.py:74 - 加载知识库： /Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/agent_proj/data/扫地机器人100问2.txt内存已经存在知识库内，跳过
+2026-04-04 18:30:10,604 - agent - INFO - vector_store.py:74 - 加载知识库： /Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/agent_proj/data/故障排除.txt内存已经存在知识库内，跳过
+2026-04-04 18:30:10,604 - agent - INFO - vector_store.py:74 - 加载知识库： /Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/agent_proj/data/扫拖一体机器人100问.txt内存已经存在知识库内，跳过
+2026-04-04 18:30:10,604 - agent - INFO - vector_store.py:74 - 加载知识库： /Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/agent_proj/data/维护保养.txt内存已经存在知识库内，跳过
+2026-04-04 18:30:10,605 - agent - INFO - vector_store.py:74 - 加载知识库： /Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/agent_proj/data/扫地机器人100问.pdf内存已经存在知识库内，跳过
+2026-04-04 18:30:35,734 - agent - INFO - vector_store.py:74 - 加载知识库： /Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/agent_proj/data/选购指南.txt内存已经存在知识库内，跳过
+2026-04-04 18:30:35,734 - agent - INFO - vector_store.py:74 - 加载知识库： /Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/agent_proj/data/扫地机器人100问2.txt内存已经存在知识库内，跳过
+2026-04-04 18:30:35,735 - agent - INFO - vector_store.py:74 - 加载知识库： /Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/agent_proj/data/故障排除.txt内存已经存在知识库内，跳过
+2026-04-04 18:30:35,735 - agent - INFO - vector_store.py:74 - 加载知识库： /Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/agent_proj/data/扫拖一体机器人100问.txt内存已经存在知识库内，跳过
+2026-04-04 18:30:35,735 - agent - INFO - vector_store.py:74 - 加载知识库： /Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/agent_proj/data/维护保养.txt内存已经存在知识库内，跳过
+2026-04-04 18:30:35,736 - agent - INFO - vector_store.py:74 - 加载知识库： /Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/agent_proj/data/扫地机器人100问.pdf内存已经存在知识库内，跳过
