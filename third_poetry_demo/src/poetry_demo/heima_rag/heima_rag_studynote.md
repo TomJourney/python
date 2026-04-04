@@ -4771,6 +4771,187 @@ if __name__ == "__main__":
 
 ---
 
+## 【6.3】配置工具+文件工具+提示词加载工具
+
+### 【6.3.1】配置工具
+
+【config_handler.py】
+
+```python
+"""
+yaml
+k:v
+"""
+
+import yaml
+
+from poetry_demo.heima_rag.agent_proj.utils.path_tool import get_abs_path
+
+# 加载 rag 配置
+def load_rag_config(config_path:str=get_abs_path("config/rag.yaml"), encoding="utf-8"):
+    with open(config_path, "r", encoding=encoding) as f:
+        return yaml.load(f, Loader=yaml.FullLoader)
+
+# 加载 rag 配置
+def load_chroma_config(config_path:str=get_abs_path("config/chroma.yaml"), encoding="utf-8"):
+    with open(config_path, "r", encoding=encoding) as f:
+        return yaml.load(f, Loader=yaml.FullLoader)
+
+# 加载 rag 配置
+def load_prompts_config(config_path:str=get_abs_path("config/prompts.yaml"), encoding="utf-8"):
+    with open(config_path, "r", encoding=encoding) as f:
+        return yaml.load(f, Loader=yaml.FullLoader)
+
+# 加载 rag 配置
+def load_agent_config(config_path:str=get_abs_path("config/agent.yaml"), encoding="utf-8"):
+    with open(config_path, "r", encoding=encoding) as f:
+        return yaml.load(f, Loader=yaml.FullLoader)
+
+# 变量
+rag_config = load_rag_config()
+chroma_config = load_chroma_config()
+prompts_config = load_prompts_config()
+agent_config = load_agent_config()
+
+# 测试案例
+if __name__ == "__main__":
+    print(rag_config["chat_model_name"]) # qwen3-max
+```
+
+<br>
+
+### 【6.3.2】文件工具
+
+【file_handler.py】
+
+```python
+"""
+文件处理工具
+"""
+import hashlib
+import os
+
+from langchain_community.document_loaders import PyPDFLoader, TextLoader
+from langchain_core.documents import Document
+
+from logger_handler import logger
+
+# 获取文件的md5的16进制字符串
+def get_file_md5_hex(file_path:str):
+    if not os.path.exists(file_path):
+        logger.error(f"[md5计算]，文件{file_path}不存在")
+        return
+    if not os.path.isfile(file_path):
+        logger.error(f"[md5计算]路径{file_path}不是文件")
+        return
+    # 计算md5值
+    md5_obj = hashlib.md5()
+    chunk_size = 4096 # 4KB分片，避免文件过大撑爆内存
+    try:
+        with open(file_path, "rb") as f:  # 必须二进制读取
+            while chunk := f.read(chunk_size):
+                md5_obj.update(chunk)
+            """
+            chunk = f.read(chunk_size)
+            while chunk:
+                md5_object.update(chunk)
+                chunk = f.read(chunk_size)
+            """
+            md5_hex = md5_obj.hexdigest()
+            return md5_hex
+    except Exception as e:
+        logger.error(f"计算文件{file_path}md5失败，{str(e)}")
+
+# 返回文件夹内的文件列表（允许的文件后缀）
+def listdir_with_allowed_type(path:str, allowed_type:tuple[str]):
+    files = []
+    if not os.path.isdir(path):
+        logger.error(f"[listdir_with_allowed_type]-{path}不是文件夹")
+        return allowed_type
+    for f in os.listdir(path):
+        if f.endswith(allowed_type):
+            files.append(os.path.join(path, f))
+    return tuple(files)
+
+# 加载pdf文档
+def pdf_loader(filepath: str, passwd=None) -> list[Document]:
+    return PyPDFLoader(filepath, passwd).load()
+
+# 加载text文档
+def txt_loader(filepath: str) -> list[Document]:
+    return TextLoader(filepath).load()
+```
+
+<br>
+
+### 【6.3.3】提示词加载工具
+
+```python
+# 提示词加载工具
+from poetry_demo.heima_rag.agent_proj.utils.config_handler import prompts_config
+from poetry_demo.heima_rag.agent_proj.utils.logger_handler import logger
+from poetry_demo.heima_rag.agent_proj.utils.path_tool import get_abs_path
+
+
+# 加载系统提示词
+def load_system_prompts():
+    try:
+        main_prompt_path = get_abs_path(prompts_config["main_prompt_path"])
+    except KeyError as e:
+        logger.error(f"yaml配置中没有key=main_prompt_path 的配置项")
+        raise e
+    try:
+        return open(main_prompt_path, "r", encoding="utf-8").read()
+    except Exception as e:
+        logger.error(f"[load_system_prompts方法]解析系统提示词报错, {str(e)}")
+        raise e
+
+
+# 加载rag提示词
+def load_rag_prompts():
+    try:
+        rag_summarize_prompt_path = get_abs_path(prompts_config["rag_summarize_prompt_path"])
+    except KeyError as e:
+        logger.error(f"yaml配置中没有key=rag_summarize_prompt_path 的配置项")
+        raise e
+    try:
+        return open(rag_summarize_prompt_path, "r", encoding="utf-8").read()
+    except Exception as e:
+        logger.error(f"[load_rag_prompts方法]解析rag提示词报错, {str(e)}")
+        raise e
+
+# 加载report提示词
+def load_report_prompts():
+    try:
+        report_prompt_path = get_abs_path(prompts_config["report_prompt_path"])
+    except KeyError as e:
+        logger.error(f"yaml配置中没有key=report_prompt_path 的配置项")
+        raise e
+    try:
+        return open(report_prompt_path, "r", encoding="utf-8").read()
+    except Exception as e:
+        logger.error(f"[load_report_prompts方法]解析report提示词报错, {str(e)}")
+        raise e
+
+# 测试案例
+if __name__ == "__main__":
+    # logger.info(load_system_prompts())
+    # logger.info(load_rag_prompts())
+    logger.info(load_report_prompts())
+```
+
+<br>
+
+---
+
+## 【6.4】
+
+
+
+
+
+
+
 
 
 
