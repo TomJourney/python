@@ -5088,7 +5088,7 @@ if __name__ == "__main__":
 
 ---
 
-## 【6.5】rag总结服务开发
+## 【6.5】agent项目-rag总结服务开发
 
 ### 【6.5.1】rag_summarize_service.py
 
@@ -5198,6 +5198,8 @@ if __name__ == "__main__":
 <br>
 
 ---
+
+## 【6.6】agent项目-tools工具开发
 
 
 
