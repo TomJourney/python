@@ -1,0 +1,22 @@
+2026-04-05 06:55:28,032 - agent - INFO - agent_middleware.py:44 - log_before_model方法：即将调用模型，带有1条消息
+2026-04-05 06:55:28,032 - agent - INFO - agent_middleware.py:45 - log_before_model方法: HumanMessage 扫地机器人在我所在地区的气温下如何保养
+2026-04-05 06:55:31,180 - agent - INFO - agent_middleware.py:22 - monitor_tool方法：执行工具=get_user_location
+2026-04-05 06:55:31,180 - agent - INFO - agent_middleware.py:23 - monitor_tool方法：传入参数={}
+2026-04-05 06:55:31,181 - agent - INFO - agent_middleware.py:27 - monitor_tool方法：执行工具=get_user_location调用成功
+2026-04-05 06:55:31,182 - agent - INFO - agent_middleware.py:44 - log_before_model方法：即将调用模型，带有3条消息
+2026-04-05 06:55:31,183 - agent - INFO - agent_middleware.py:45 - log_before_model方法: ToolMessage 重庆
+2026-04-05 06:55:34,327 - agent - INFO - agent_middleware.py:22 - monitor_tool方法：执行工具=get_weather
+2026-04-05 06:55:34,327 - agent - INFO - agent_middleware.py:23 - monitor_tool方法：传入参数={'city': '重庆'}
+2026-04-05 06:55:34,328 - agent - INFO - agent_middleware.py:27 - monitor_tool方法：执行工具=get_weather调用成功
+2026-04-05 06:55:34,329 - agent - INFO - agent_middleware.py:44 - log_before_model方法：即将调用模型，带有5条消息
+2026-04-05 06:55:34,329 - agent - INFO - agent_middleware.py:45 - log_before_model方法: ToolMessage 城市重庆天气为晴天，气温26摄氏度，空气湿度50%，南风1级，AQI指数21，最近6小时降雨概率降低
+2026-04-05 06:55:37,856 - agent - INFO - agent_middleware.py:22 - monitor_tool方法：执行工具=rag_summarize
+2026-04-05 06:55:37,856 - agent - INFO - agent_middleware.py:23 - monitor_tool方法：传入参数={'query': '扫地机器人在26摄氏度、50%湿度环境下的保养方法'}
+2026-04-05 06:55:39,860 - agent - INFO - agent_middleware.py:27 - monitor_tool方法：执行工具=rag_summarize调用成功
+2026-04-05 06:55:39,862 - agent - INFO - agent_middleware.py:44 - log_before_model方法：即将调用模型，带有7条消息
+2026-04-05 06:55:39,862 - agent - INFO - agent_middleware.py:45 - log_before_model方法: ToolMessage 参考资料中未提及扫地机器人在26摄氏度、50%湿度环境下的具体保养方法。
+2026-04-05 06:55:43,465 - agent - INFO - agent_middleware.py:22 - monitor_tool方法：执行工具=rag_summarize
+2026-04-05 06:55:43,466 - agent - INFO - agent_middleware.py:23 - monitor_tool方法：传入参数={'query': '扫地机器人日常保养方法和注意事项'}
+2026-04-05 06:55:47,354 - agent - INFO - agent_middleware.py:27 - monitor_tool方法：执行工具=rag_summarize调用成功
+2026-04-05 06:55:47,355 - agent - INFO - agent_middleware.py:44 - log_before_model方法：即将调用模型，带有9条消息
+2026-04-05 06:55:47,355 - agent - INFO - agent_middleware.py:45 - log_before_model方法: ToolMessage 定期清理滚刷和边刷上的缠绕物，及时清空尘盒并清洗滤网（部分型号支持水洗），检查并清理传感器和充电触点，避免在潮湿或有积水地面使用，确保工作区域无电线、小物件等障碍物，长时间不用时应关闭电源并存放于干燥处。
