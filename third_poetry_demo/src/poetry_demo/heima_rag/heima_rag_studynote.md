@@ -964,11 +964,11 @@ poetry add langchain langchain-community langchain-ollama dashscope chromadb
 
 工作流图解：
 
-![image-20260308211439997](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/img/rag_workflowpng.png)
+![image-20260308211439997](./img/rag_workflowpng.png)
 
 rag标准流程：
 
-![image-20260308210933665](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/img/rag_intro.png)
+![image-20260308210933665](./img/rag_intro.png)
 
 <br>
 
@@ -980,7 +980,7 @@ rag标准流程：
    1. 离线流程：知识库预处理；
    2. 在线流程：用户问题与检索生成；
 
-![image-20260308211836568](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/img/rag_online_offline.png)
+![image-20260308211836568](./img/rag_online_offline.png)
 
 <br>
 
@@ -1056,7 +1056,7 @@ rag标准流程：
    1. 更多的向量会在计算，存储和匹配过程中，带来更大压力；
    2. <font color=red>选择合适的向量维度需要在精确和性能之间做平衡；一般选择1536维度是比较好的选择</font>；
 
-![vector](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/img/vector.png)
+![vector](./img/vector.png)
 
 <br>
 
@@ -1489,7 +1489,7 @@ print(model.embed_documents(["我喜欢你", "我稀饭你", "晚上吃啥"]))
 
 ### 【3.10.1】langchain调用3类模型的使用总结
 
-![langchain_call_model_conclusion](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/img/langchain_call_model_conclusion.png)
+![langchain_call_model_conclusion](./img/langchain_call_model_conclusion.png)
 
 <br>
 
@@ -1646,7 +1646,7 @@ print(prompt_text.to_string())
 1. PropmptTemplate, FewShotPromptTemplate, ChatPromptTemplate 都拥有 format 和 invoke 这2类方法； 
 2. 类继承结构如下：
 
-![prompt_template](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/img/prompt_template.png)
+![prompt_template](./img/prompt_template.png)
 
 3. format与invoke的区别：
 
@@ -1781,7 +1781,7 @@ print(result.content)
 3. 核心前提： 即Runnable子类对象才能入链（以及Callable，Mapping接口子类对象也可以加入）；
 4. 我们目前所学的组件，均是Runnable接口的子类，继承关系如下；
 
-![chain_runnable_class_extend](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/img/chain_runnable_class_extend.png)
+![chain_runnable_class_extend](./img/chain_runnable_class_extend.png)
 
 <br>
 
@@ -1796,7 +1796,7 @@ print(result.content)
 3. 通过invoke或stream进行阻塞执行或流式执行； 
 4. 组成的链在执行上有：上一个组件的输出作为下一个组件的输入的特性； 
 
-![chain_steps](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/img/chain_steps.png)
+![chain_steps](./img/chain_steps.png)
 
 ---
 
@@ -1882,7 +1882,7 @@ a | b 的本质调用是 a.__or__(b)
 我们需要重写 | 即 __or__ 方法
 ```
 
-![operator_overload](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/img/operator_overload.png)
+![operator_overload](./img/operator_overload.png)
 
 <br>
 
@@ -2033,7 +2033,7 @@ def invoke(
 
 需要做类型转换， 可以借助 langchain内置的解析器：StrOutputParser 字符串输出解析器； 
 
-![str_output_parser](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/img/str_output_parser.png)
+![str_output_parser](./img/str_output_parser.png)
 
 <br>
 
@@ -2045,7 +2045,7 @@ def invoke(
    1. 可以将 AIMessage解析为简单的字符串，符合模型invoke方法要求（可传入字符串，不接受AIMessage类型）
    2. 是Runnable接口的子类（可以加入链）
 
-![str_output_parser_solution](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/img/str_output_parser_solution.png)
+![str_output_parser_solution](./img/str_output_parser_solution.png)
 
 【代码实现】使用StrOutputParser解析模型输出
 
@@ -2201,7 +2201,7 @@ for chunk in result:
    5. StrOutputParser ： AIMessage输入， str输出 
    6. JsonOutputParser： AIMessage输入，dict输出 
 
-![jsom_output_parser](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/img/jsom_output_parser.png)
+![jsom_output_parser](./img/jsom_output_parser.png)
 
 <br>
 
@@ -2781,11 +2781,11 @@ d: 吃饭3,rap' metadata={'source': '../data/stu.csv', 'row': 3}
 2. jq 是一个跨平台的json解析工具， langchain底层对json解析就是基于jq工具实现的； 
    1. 将json数据的信息抽取出来， 封装为Document对象，抽取的时候依赖 jq_schema 语法； 
 
-![json_loader_jq](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/img/json_loader_jq.png)
+![json_loader_jq](./img/json_loader_jq.png)
 
 3. JSONLoader-代码示例 
 
-![jsonloder_ex](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/img/jsonloder_ex.png)
+![jsonloder_ex](./img/jsonloder_ex.png)
 
 <br>
 
@@ -2831,13 +2831,13 @@ print(document)
 
 ```c++
 	========== 【案例1】 使用jq schema抽取json文件 
-[Document(metadata={'source': '/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/data/stu.json', 'seq_num': 1}, page_content='{"name": "\\u5f20\\u4e09", "age": 11, "hobby": ["\\u5531\\u6b4c", "\\u8df3\\u821e", "rap"], "other": {"addr": "\\u6210\\u90fd", "tel": "123456"}}')]
+[Document(metadata={'source': './data/stu.json', 'seq_num': 1}, page_content='{"name": "\\u5f20\\u4e09", "age": 11, "hobby": ["\\u5531\\u6b4c", "\\u8df3\\u821e", "rap"], "other": {"addr": "\\u6210\\u90fd", "tel": "123456"}}')]
 
 ========== 【案例2】使用jq schema抽取json 列表 文件 
-[Document(metadata={'source': '/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/data/stu_list.json', 'seq_num': 1}, page_content='张三01'), Document(metadata={'source': '/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/data/stu_list.json', 'seq_num': 2}, page_content='张三02'), Document(metadata={'source': '/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/data/stu_list.json', 'seq_num': 3}, page_content='张三03')]
+[Document(metadata={'source': './data/stu_list.json', 'seq_num': 1}, page_content='张三01'), Document(metadata={'source': './data/stu_list.json', 'seq_num': 2}, page_content='张三02'), Document(metadata={'source': './data/stu_list.json', 'seq_num': 3}, page_content='张三03')]
 
 ==========【案例3】 使用jq schema抽取json_lines 文件 
-[Document(metadata={'source': '/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/data/json_line_stu_list.json', 'seq_num': 1}, page_content='张三01'), Document(metadata={'source': '/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/data/json_line_stu_list.json', 'seq_num': 2}, page_content='张三02'), Document(metadata={'source': '/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/data/json_line_stu_list.json', 'seq_num': 3}, page_content='张三03')]
+[Document(metadata={'source': './data/json_line_stu_list.json', 'seq_num': 1}, page_content='张三01'), Document(metadata={'source': './data/json_line_stu_list.json', 'seq_num': 2}, page_content='张三02'), Document(metadata={'source': './data/json_line_stu_list.json', 'seq_num': 3}, page_content='张三03')]
 
 ```
 
@@ -2879,7 +2879,7 @@ print(document)
 
 2. 代码示例：
 
-![textloader_recursiveCharaterTextSplitter](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/img/textloader_recursiveCharaterTextSplitter.png)
+![textloader_recursiveCharaterTextSplitter](./img/textloader_recursiveCharaterTextSplitter.png)
 
 ### 【3.25.3】代码实现 
 
@@ -2940,7 +2940,7 @@ page_content='##!/usr/bin/env python3
    2. 可以指定小文档的最大字符数， 重叠字符数；  
    3. 可以手动指定段落划分的依据（符号），以及字符数量统计函数； 
 
-![pypdf_ex](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/img/pypdf_ex.png)
+![pypdf_ex](./img/pypdf_ex.png)
 
 <br>
 
@@ -3034,7 +3034,7 @@ print(f"字符串切⽚: {string_var[0:5]}")' metadata={'producer': 'macOS 版�
 
 1. 基于langchain的向量存储，存储嵌入数据，并执行相似性搜索；
 
-![rag_flow](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/img/rag_flow.png)
+![rag_flow](./img/rag_flow.png)
 
 2. <font color=red>如上图，这是一个典型的向量存储应用，也是典型的rag流程（这张rag图非常重要）</font>；
 3. 这部分开发主要涉及到：
@@ -3049,7 +3049,7 @@ print(f"字符串切⽚: {string_var[0:5]}")' metadata={'producer': 'macOS 版�
       3. Similarity_search 
 4. 向量存储的代码示例：
 
-![vector_stores](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/img/vector_stores.png)
+![vector_stores](./img/vector_stores.png)
 
 <br>
 
@@ -3491,7 +3491,7 @@ Human: 用户提问：怎么减肥？
       3. 给出模型参考资料，规避模型幻觉（一本正经的胡说八道）
    2. 在线处理：用户提问会基于私有知识库做检索，获取参考资料，同步组装新提示词询问大模型获取结果；
 
-![rag_review](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/img/rag_review.png)
+![rag_review](./img/rag_review.png)
 
 <br>
 
@@ -3500,11 +3500,11 @@ Human: 用户提问：怎么减肥？
 1. 本次项目以某东商品衣服为例，以衣服属性构建本地知识。
 2. 使用者可以<font color=red>自由更新</font>本地知识，用户问题的答案也是<font color=red>基于本地知识</font>生成的；
 
-![rag_online_offline2](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/img/rag_online_offline2.png)
+![rag_online_offline2](./img/rag_online_offline2.png)
 
 3. 项目主要实现如下代码文件：
 
-![rag_proj_files](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/img/rag_proj_files.png)
+![rag_proj_files](./img/rag_proj_files.png)
 
 <br>
 ---
@@ -3513,7 +3513,7 @@ Human: 用户提问：怎么减肥？
 
 ### 【4.2.1】项目需求和思路
 
-![rag_web_upload](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/img/rag_web_upload.png)
+![rag_web_upload](./img/rag_web_upload.png)
 
 <br>
 
@@ -3558,7 +3558,7 @@ if upload_file is not None:
 
 运行效果：
 
-![file_upload_page](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/img/file_upload_page.png)
+![file_upload_page](./img/file_upload_page.png)
 
 <br>
 
@@ -3818,7 +3818,7 @@ print(f'上传了{st.session_state["counter"]}个文件')
 
 【上传效果】
 
-![streamlit_session_state_upload](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/img/streamlit_session_state_upload.png)
+![streamlit_session_state_upload](./img/streamlit_session_state_upload.png)
 
 <br>
 
@@ -3828,7 +3828,7 @@ print(f'上传了{st.session_state["counter"]}个文件')
 
 ### 【4.6.1】在线流程向量存储思路
 
-![online_vector_store](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/img/online_vector_store.png)
+![online_vector_store](./img/online_vector_store.png)
 
 <br>
 
@@ -4182,7 +4182,7 @@ if prompt:
    1. 没有agent：大模型只能基于自身训练数据回答问题，遇到需要实时数据，复杂计算，外部工具调用的场景就会卡壳；
    2. 有agent：大模型就像一个指挥官，能够思考任务步骤-> 选择合适工具 -> 执行工具调用 -> 根据结果调整策略，直到完成任务；
 
-![langchain_agent](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/agent/img/langchain_agent.png)
+![langchain_agent](./agent/img/langchain_agent.png)
 
 2. agent核心特点：
    1. 目标驱动：围绕用户的具体任务目标展开工作；
@@ -4194,7 +4194,7 @@ if prompt:
 
 ### 【5.1.1】例：电商商品问答
 
-![agent_ex_dianshang](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/agent/img/agent_ex_dianshang.png)
+![agent_ex_dianshang](./agent/img/agent_ex_dianshang.png)
 
 ### 【5.1.2】大模型与agent区别
 
@@ -4361,7 +4361,7 @@ AIMessage 传智教育的当前股价是 **20元**。
       1. 即获取工具返回值，判断工具是否正常工作，为下一轮思考提供信息；
    4. 总结：（再）思考 -> （再）行动 -> （再）观察 -> 循环往复直到结束 ； 
 
-![agent-react](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/agent/img/agent-react.png)
+![agent-react](./agent/img/agent-react.png)
 
 <br>
 
@@ -4472,9 +4472,9 @@ for chunk in agent.stream(
    3. 重试，备用，提前终止等逻辑控制； 
    4. 安全防护，个人身份检测等； 
 
-![agent_middle_no](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/agent/img/agent_middle_no.png)
+![agent_middle_no](./agent/img/agent_middle_no.png)
 
-![agent_middle_have](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/agent/img/agent_middle_have.png)
+![agent_middle_have](./agent/img/agent_middle_have.png)
 
 3. langchain中内置了一些基础的中间件，参见： [https://docs.langchain.com/oss/python/langchain/middleware/overview](https://docs.langchain.com/oss/python/langchain/middleware/overview)
 4. <font color=red>中间件通过hook钩子来实现拦截</font>，自定义中间件可以简单的使用装饰器来定义； 
@@ -4648,7 +4648,7 @@ AIMessage :  **观察**：深圳今天的天气是晴天。
 
 ### 【6.1.2】项目骨架
 
-![agent_proj_overview](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/agent/img/agent_proj_overview.png)
+![agent_proj_overview](./agent/img/agent_proj_overview.png)
 
 <br>
 
@@ -5502,11 +5502,11 @@ if prompt:
 
 <font color=red>用户问题1： 结合我所在城市的天气，机器人如何保养</font>；
 
-![agent_qa_01](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/agent/img/agent_qa_01.png)
+![agent_qa_01](./agent/img/agent_qa_01.png)
 
 <font color=red>用户问题2： 生成我使用机器人的报告总结</font>；
 
-![agent_qa_02](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/heima_rag/agent/img/agent_qa_02.png)
+![agent_qa_02](./agent/img/agent_qa_02.png)
 
 <br>
 
