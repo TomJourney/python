@@ -12,9 +12,9 @@
 
 # 【1】MCP-基础
 
-1. mcp： model context protocol， 模型上下文协议； 
+1. mcp： model context protocol， 模型上下文协议； <font color=red>是 Anthropic公司在2024年11月25日发布的一个协议</font>；
 2. <font color=red>mcp用途：让大模型更好使用各类工具的一个协议</font>； 
-   1. 如，借助mcp，我们可以让模型使用浏览器上网查询信息，可以让模型操作Unity编写游戏，也可以让模型查询实时路况；
+   1. 如，借助mcp，我们可以让模型使用浏览器上网查询信息，可以让模型操作Unity编写游戏，也可以让模型查询实时路况； 
    2. 因为大模型本身其实只会问答，它并不会使用外部工具；
    3. <font color=red>而mcp的出现，就等于是让大模型拥有了使用各种外部工具的能力</font>；
 
