@@ -145,6 +145,14 @@ chmod +x uv-installer.sh
 
 ![mcp_server_install](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/mcp/img/mcp_server_install.png)
 
+4. 向cline提出问题：
+
+```c++
+请抓取下面这个网页的内容，并将其转换为markdown后放到目录/XXX/mcp里面的guides.md文件中：https://docs.astral.sh/uv/guides/install-python/ 
+```
+
+![mcp_fetch_effect](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/mcp/img/mcp_fetch_effect.png)
+
 <br>
 
 ---
