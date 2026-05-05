@@ -123,7 +123,7 @@ chmod +x uv-installer.sh
 
 <br>
 
-### 【1.3.4】MCP Server：fetch
+### 【1.3.4】调用MCP Server：fetch
 
 1. fetch：用于抓取网页内容，通过uvx来启动的；
 2. 打开 mcp.so ;  输入fetch查找，进入 https://mcp.so/server/fetch/test ，复制mcp config；
@@ -156,6 +156,38 @@ chmod +x uv-installer.sh
 <br>
 
 ---
+
+### 【1.3.5】如何使用他人制作的MCP Server：npx部分
+
+1. 与uvx安装python程序类似， npx安装的是node程序；
+2. 由于npx是node的一部分， 所以我们直接安装node.js 即可； 
+3. nodejs安装完成后，打开https://mcpmarket.com/zh；
+4. <font color=red>搜索一个 名为hotnews的mcp server：用于拉去热点新闻</font>； 
+5. 同cline安装fetch类似， 复制 hotnews这个mcpserver的配置到cline，并安装； 
+
+```json
+"mcp-server-hotnews": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@wopal/mcp-server-hotnews"
+      ]
+    }
+```
+
+【安装效果】
+
+![hot_news_mcp_server_npx](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/mcp/img/hot_news_mcp_server_npx.png)
+
+<br>
+
+#### 【1.3.5.1】新建一个对话：调用hotnews这个mcp server
+
+1. 问题：获取今天最火的科技新闻； 
+
+![hot_news_mcp_server_calling](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/mcp/img/hot_news_mcp_server_calling.png)
+
+<br>
 
 
 
