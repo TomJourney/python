@@ -100,7 +100,7 @@
 3. uvx：是 uv tool run 的缩写； （这个tool是uv领域的tool，非mcp中的工具tool）
    1. uv：uv就是python语言的一个包管理软件； 
    2. 而 uvx：可以用来直接启动python程序； 比如uvx ruff 可以用来安装并启动ruff这个程序；uvx会帮你把所需依赖+执行环境全都配置好，不需要你自己去处理；
-4. 安装并运行uvx：
+4. 安装并运行uvx(https://github.com/astral-sh/uv)：
 
 ``` bash
 curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -126,7 +126,28 @@ chmod +x uv-installer.sh
 ### 【1.3.4】MCP Server：fetch
 
 1. fetch：用于抓取网页内容，通过uvx来启动的；
-2. 打开 mcp.so ; 
+2. 打开 mcp.so ;  输入fetch查找，进入 https://mcp.so/server/fetch/test ，复制mcp config；
+
+```json
+{
+  "mcpServers": {
+    "fetch": {
+      "args": [
+        "mcp-server-fetch"
+      ],
+      "command": "uvx"
+    }
+  }
+}
+```
+
+3. 把上述mcpServer的json配置拷贝到cline的mcpServer，执行安装名为fetch的mcp server；
+
+![mcp_server_install](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/mcp/img/mcp_server_install.png)
+
+<br>
+
+---
 
 
 
