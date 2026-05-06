@@ -189,6 +189,216 @@ chmod +x uv-installer.sh
 
 <br>
 
+---
+
+# 【2】MCP-进阶
+
+1. 内容包括：
+   1.  手动编写一个MCP Server；
+   2. 分析MCP底层协议（拦截MCP Server的输入与输出）
+      1. 如何在不借助MCP Host和任何编程语言的情况下，根据MCP协议的规范直接与MCP Server沟通； 
+   3. 总结MCP含义与地位； 
+2. 补充：MCP协议与语言无关，咱们可以通过python，或node， 或java，或c# 编写mcp Server； 
+
+## 【2.1】自行创建MCP Server
+
+### 【2.1.1.】环境搭建
+
+1. 环境搭建：
+   1. 安装python，且版本大于3.10
+   2. 安装uv， python的包管理器； 
+   3. vscode， 编写代码的IDE工具； 
+   4. cline，vscode的插件，它是一个MCP Host；
+
+### 【2.1.2】编写第一个MCP Server
+
+例子参见： [https://modelcontextprotocol.io/docs/develop/build-server](https://modelcontextprotocol.io/docs/develop/build-server)
+
+【初始化虚拟环境】
+
+```shell
+# Create a new directory for our project
+uv init weather
+cd weather
+
+# Create virtual environment and activate it
+uv venv
+source .venv/bin/activate
+
+# Install dependencies
+uv add "mcp[cli]" httpx
+
+# Create our server file
+touch weather.py
+```
+
+【编写MCP Server】
+
+```python
+from typing import Any
+import httpx
+from mcp.server.fastmcp import FastMCP
+
+# initialize the MCP server
+mcp = FastMCP("weather", log_level="ERROR")
+
+# Constants
+NWS_API_BASE = "https://api.weather.gov"
+USER_AGENT = "weather-app/1.0"
+
+# 网络请求函数
+async def make_nws_request(url: str) -> dict[str, Any] | None:
+    """Make a request to the NWS API with proper error handling."""
+    headers = {"User-Agent": USER_AGENT, "Accept": "application/geo+json"}
+    async with httpx.AsyncClient() as client:
+        try:
+            response = await client.get(url, headers=headers, timeout=30.0)
+            response.raise_for_status()
+            return response.json()
+        except Exception:
+            return None
+
+# 格式化告警数据 
+def format_alert(feature: dict) -> str:
+    """Format an alert feature into a readable string."""
+    props = feature["properties"]
+    return f"""
+Event: {props.get("event", "Unknown")}
+Area: {props.get("areaDesc", "Unknown")}
+Severity: {props.get("severity", "Unknown")}
+Description: {props.get("description", "No description available")}
+Instructions: {props.get("instruction", "No specific instructions provided")}
+"""
+
+
+# create tool named get_alerts # 天气预警
+@mcp.tool()
+async def get_alerts(state: str) -> str:
+    """Get weather alerts for a US state.
+
+    Args:
+        state: Two-letter US state code (e.g. CA, NY)
+    """
+    url = f"{NWS_API_BASE}/alerts/active/area/{state}"
+    data = await make_nws_request(url)
+
+    if not data or "features" not in data:
+        return "Unable to fetch alerts or no alerts found."
+
+    if not data["features"]:
+        return "No active alerts for this state."
+
+    alerts = [format_alert(feature) for feature in data["features"]]
+    return "\n---\n".join(alerts)
+
+
+# create tool named get_forecast # 天气预报
+@mcp.tool()
+async def get_forecast(latitude: float, longitude: float) -> str:
+    """Get weather forecast for a location.
+
+    Args:
+        latitude: Latitude of the location
+        longitude: Longitude of the location
+    """
+    # First get the forecast grid endpoint
+    points_url = f"{NWS_API_BASE}/points/{latitude},{longitude}"
+    points_data = await make_nws_request(points_url)
+
+    if not points_data:
+        return "Unable to fetch forecast data for this location."
+
+    # Get the forecast URL from the points response
+    forecast_url = points_data["properties"]["forecast"]
+    forecast_data = await make_nws_request(forecast_url)
+
+    if not forecast_data:
+        return "Unable to fetch detailed forecast."
+
+    # Format the periods into a readable forecast
+    periods = forecast_data["properties"]["periods"]
+    forecasts = []
+    for period in periods[:5]:  # Only show next 5 periods
+        forecast = f"""
+{period["name"]}:
+Temperature: {period["temperature"]}°{period["temperatureUnit"]}
+Wind: {period["windSpeed"]} {period["windDirection"]}
+Forecast: {period["detailedForecast"]}
+"""
+        forecasts.append(forecast)
+
+    return "\n---\n".join(forecasts)
+
+if __name__ == "__main__":
+    mcp.run(transport="stdio")
+```
+
+【vscode的cline插件安装weather这个MCP Server】
+
+```json
+{
+  "mcpServers": {
+    "fetch": {
+      "disabled": false,
+      "timeout": 60,
+      "type": "stdio",
+      "command": "uvx",
+      "args": [
+        "mcp-server-fetch"
+      ]
+    }, 
+    "mcp-server-hotnews": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@wopal/mcp-server-hotnews"
+      ]
+    }, 
+    "weather": {
+      "disabled": false,
+      "timeout": 60,
+      "command": "uv",
+      "args": [
+        "--directory",
+        "/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/mcp/advance/weather",
+        "run",
+        "weather.py"
+      ], 
+      "transport": "stdio"
+    }
+  }
+}
+```
+
+【测试】在cline中提问：纽约明天的天气怎么样
+
+![diy_mcp_server_weather](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/mcp/img/diy_mcp_server_weather.png)
+
+<br>
+
+---
+
+## 【2.2】分析MCP底层协议（拦截MCP Server的输入与输出）
+
+1. 编写一个日志脚本 mcp_logger.py，截取输入与输出； 
+2. 我们让cline与mcp_logger.py 沟通， 再让mcp_logger.py 与真正的mcp server沟通； 
+   1. mcp_logger.py 在其中充当中间人的角色；作用是获取cline与mcp server的输入与输出，并把输入输出日志保存到日志文件中；
+   2.  通过查看日志文件，我们就能够知道cline如何与mcp server沟通的了；
+
+![mcp_logger_io](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/mcp/img/mcp_logger_io.png)
+
+<br>
+
+---
+
+
+
+
+
+
+
+
+
 
 
 

@@ -33,6 +33,11 @@ packages = [
    { include = "poetry_demo", from = "src" }
 ]
 
+[tool.uv.workspace]
+members = [
+    "src/poetry_demo/mcp/advance/weather",
+]
+
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
