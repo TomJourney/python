@@ -364,7 +364,7 @@ if __name__ == "__main__":
         "run",
         "weather.py"
       ], 
-      "transport": "stdio"
+      "transportType": "stdio"
     }
   }
 }
@@ -390,6 +390,10 @@ if __name__ == "__main__":
 <br>
 
 ---
+
+### 【2.2.1】实战解析：MCP底层协议的完整剖析过程
+
+1. 代码参见： https://github.com/MarkTechStation/VideoCode 
 
 
 
