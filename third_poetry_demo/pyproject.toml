@@ -36,6 +36,7 @@ packages = [
 [tool.uv.workspace]
 members = [
     "src/poetry_demo/mcp/advance/weather",
+    "src/poetry_demo/mcp/advance/weather/weather2",
 ]
 
 

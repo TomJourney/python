@@ -86,7 +86,7 @@
 
 1. MCP Host：Cline； MCP Server：本地编写的工具weather； 
 2. Cline添加weather这个MCP Server，并加载MCP Server的工具列表；
-3. 用户向Cline发送请求：纽约明天的天气怎么样；MCP Host + MCP Server + 大模型的整体协作时序如下：
+3. <font color=red>用户向Cline发送请求：纽约明天的天气怎么样；MCP Host + MCP Server + 大模型的整体协作时序如下</font>：
 
 ![mcp_host_server_llm](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/mcp/img/mcp_host_server_llm.png)
 
