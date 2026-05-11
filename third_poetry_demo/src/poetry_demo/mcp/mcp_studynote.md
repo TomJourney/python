@@ -394,6 +394,117 @@ if __name__ == "__main__":
 ### 【2.2.1】实战解析：MCP底层协议的完整剖析过程
 
 1. 代码参见： https://github.com/MarkTechStation/VideoCode 
+2. 日志输入输出：
+   1. 输入： cline -> MCP Server 
+   2. 输出：MCP Server -> cline 
+
+3. Mcp_logger 打印结果：
+
+![mcp_logger_result](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/mcp/img/mcp_logger_result.png)
+
+【日志解说】
+
+1. 第1行输入：cline -> mcp server， protocolVersion 表示cline使用的mcp协议的版本；
+2. 第2行输出：mcp server -> cline, mcp server的回复； 同时 capacities 表示mcp server不支持这些协议；<font color=red> 我的名字叫weather，版本好是1.1.0</font>； 
+3. 第3行输入： cline发送的，大意是收到； 
+4. 第4行输入：cline发送 tools/list ，请求mcp server返回工具列表； 
+5. 第5行输出：weather mcp server返回了工具列表，及工具描述，工具调用参数； 
+   1. 工具描述：其实就是我们函数的注释，在python领域中，这叫docstring，它是一种特殊的注释；
+   2. inputSchema： 定义的是json结构，给出tool的入参规范的；<font color=red> （这个InputSchema也是 @mcp.tool()这个装饰器从我们的参数里面提取出来的）</font>
+      1. 大家要知道：模型不仅要选择与用户问题最匹配的tool，还要用用户的问题中把tool的参数提取出来； 而且这个参数必须要复合 InputSchema 的规定，这样才能成功调用tool背后的函数；  
+6. 第6行输入到第9行输出： 
+
+【补充】
+
+```python
+@mcp.tool()
+async def get_forecast(latitude: float, longitude: float) -> str:
+    """Get weather forecast for a location.
+
+    Args:
+        latitude: Latitude of the location
+        longitude: Longitude of the location
+    """
+    # First get the forecast grid endpoint
+    points_url = f"{NWS_API_BASE}/points/{latitude},{longitude}"
+    points_data = await make_nws_request(points_url)
+
+    if not points_data:
+        return "Unable to fetch forecast data for this location."
+```
+
+Mcp server的工具定义注解 @mcp.tool() ，它就会提取出工具（函数）注释，并且把它放到工具介绍的description中<font color=red>（第5行输出的工具描述结果，这样大模型就可以从descriptino中了解到tool的用途，方便到时候选择与用户问题最匹配的tool）</font>。  
+
+```
+ """Get weather forecast for a location.
+
+    Args:
+        latitude: Latitude of the location
+        longitude: Longitude of the location
+    """
+```
+
+<br>
+
+【补充2】 json描述 
+
+```json
+{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "result": {
+        "tools": [
+            {
+                "name": "get_alerts",
+                "description": "Get weather alerts for a US state.\n\nArgs:\n    state: Two-letter US state code (e.g. CA, NY)\n",
+                "inputSchema": {
+                    "properties": {
+                        "state": {
+                            "title": "State",
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "state"
+                    ],
+                    "title": "get_alertsArguments",
+                    "type": "object"
+                }
+            },
+            {
+                "name": "get_forecast",
+                "description": "Get weather forecast for a location.\n\nArgs:\n    latitude: Latitude of the location\n    longitude: Longitude of the location\n",
+                "inputSchema": {
+                    "properties": {
+                        "latitude": {
+                            "title": "Latitude",
+                            "type": "number"
+                        },
+                        "longitude": {
+                            "title": "Longitude",
+                            "type": "number"
+                        }
+                    },
+                    "required": [
+                        "latitude",
+                        "longitude"
+                    ],
+                    "title": "get_forecastArguments",
+                    "type": "object"
+                }
+            }
+        ]
+    }
+}
+```
+
+inputSchema： 定义的是json结构； 
+
+<br>
+
+---
+
+
 
 
 
