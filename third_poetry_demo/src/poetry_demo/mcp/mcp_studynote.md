@@ -413,6 +413,16 @@ if __name__ == "__main__":
    2. inputSchema： 定义的是json结构，给出tool的入参规范的；<font color=red> （这个InputSchema也是 @mcp.tool()这个装饰器从我们的参数里面提取出来的）</font>
       1. 大家要知道：模型不仅要选择与用户问题最匹配的tool，还要用用户的问题中把tool的参数提取出来； 而且这个参数必须要复合 InputSchema 的规定，这样才能成功调用tool背后的函数；  
 6. 第6行输入到第9行输出： 
+   1. cline在询问mcp server有没有资源和资源模板可以使用； 
+   2. 可以看到resources和 resource_templates 的结果都是空列表； 也就是说 mcp server的回答是没有；
+   3. resource中文是资源， resource_templates 可以理解为动态资源； 
+   4. 资源就是一个文件，或一个报告之类的东西； 
+
+【总结】cline到此时摸底就结束了；这一切都发生在我们注册工具的一瞬间； 后面就是要等待合适的时机再使用mcp server 了；
+
+<br>
+
+---
 
 【补充】
 
@@ -504,7 +514,28 @@ inputSchema： 定义的是json结构；
 
 ---
 
+### 【2.2.2】实战解析：cline带着用户问题请求mcp server 的日志输出
 
+1. 用户再次向cline提出之前的问题（纽约明天的天气怎么样）；
+2. cline与mcp server的日志输出如下：
+
+![cline_mcp_server_log2](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/mcp/img/cline_mcp_server_log2.png)
+
+【日志解析】
+
+1. 第10行：cline向mcp server发出调用工具get_forecast()请求及调用参数（经纬度）； 
+   1. <font color=red>cline传入的参数结构，满足inputSchema的定义（模型提取参数的时候，就会遵守这个InputSchema的规范）</font>；
+2. 第11行：拿到请求后，mcp server就会去请求对应函数，然后输出结果，text字段值；
+
+<br>
+
+---
+
+## 【2.3】使用MCP底层协议直接与MCP server交互
+
+1. 在了解了mcp协议底层通讯细节，在了解了细节后，<font color=red>我们都不需要一个mcp host（宿主程序），就可以直接与mcp server沟通； 你只需要保证你发给mcp server的数据复合这个格式就可以了（mcp_logger输出到logger.io日志中的日志，如输入: 输出:的字样）</font>；
+2. 为了让大家更加透彻理解mcp协议，接下来，本文演示如何直接与mcp server沟通，不经过cline； 
+3. 
 
 
 
