@@ -23,7 +23,7 @@
 
 ## 【1.1】MCP Host
 
-1. <font color=red>Mcp host定义: 指运行大模型并负责协调工具/上下文的宿主程序</font>；
+1. <font color=red>Mcp host定义: 指请求大模型并负责协调工具/上下文的宿主程序</font>；
    1. 常见的 mcp host包括： Claude  Desktop， Cursor，Cline， Cherry Studio 等；
 2. 本文以 Cline为例，介绍mcp的使用方法； 
 
@@ -411,7 +411,7 @@ if __name__ == "__main__":
 5. 第5行输出：weather mcp server返回了工具列表，及工具描述，工具调用参数； 
    1. 工具描述：其实就是我们函数的注释，在python领域中，这叫docstring，它是一种特殊的注释；
    2. inputSchema： 定义的是json结构，给出tool的入参规范的；<font color=red> （这个InputSchema也是 @mcp.tool()这个装饰器从我们的参数里面提取出来的）</font>
-      1. 大家要知道：模型不仅要选择与用户问题最匹配的tool，还要用用户的问题中把tool的参数提取出来； 而且这个参数必须要复合 InputSchema 的规定，这样才能成功调用tool背后的函数；  
+      1. 大家要知道：模型不仅要选择与用户问题最匹配的tool，还要用用户的问题把tool的参数提取出来； 而且这个参数必须要复合 InputSchema 的规定，这样才能成功调用tool背后的函数；  
 6. 第6行输入到第9行输出： 
    1. cline在询问mcp server有没有资源和资源模板可以使用； 
    2. 可以看到resources和 resource_templates 的结果都是空列表； 也就是说 mcp server的回答是没有；
@@ -508,7 +508,7 @@ Mcp server的工具定义注解 @mcp.tool() ，它就会提取出工具（函数
 }
 ```
 
-inputSchema： 定义的是json结构； 
+<font color=red>inputSchema： 定义的是json结构</font>； 
 
 <br>
 
@@ -535,7 +535,47 @@ inputSchema： 定义的是json结构；
 
 1. 在了解了mcp协议底层通讯细节，在了解了细节后，<font color=red>我们都不需要一个mcp host（宿主程序），就可以直接与mcp server沟通； 你只需要保证你发给mcp server的数据复合这个格式就可以了（mcp_logger输出到logger.io日志中的日志，如输入: 输出:的字样）</font>；
 2. 为了让大家更加透彻理解mcp协议，接下来，本文演示如何直接与mcp server沟通，不经过cline； 
-3. 
+
+<br>
+
+### 【2.3.1】直接与mcp server交互
+
+1. 在终端运行mcp server程序：
+
+```shell
+uv --directory /Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/mcp/advance/weather/weather2 run weather2.py
+```
+
+2. 在终端发送打招呼内容；
+
+![direct_mcp_server](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/mcp/img/direct_mcp_server.png)
+
+<br>
+
+## 【2.4】超越表象： mcp协议的真实含义与定位
+
+1. 问题： 大模型是怎么使用mcp协议的；
+
+<br>
+
+### 【2.4.1】mcp协议的作用范围
+
+![mcp_work_range](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/mcp/img/mcp_work_range.png)
+
+【图片解说】<font color=red>mcp协议：作用于 mcp server 与 cline之间交互的部分；（红框所示）</font>；
+
+1. <font color=red>mcp协议主要规定了两部分内容（函数的注册与使用）</font>：
+   1. 每个mcp server有哪些函数可以使用；
+   2. 如何调用这些函数，即每个函数的调用方式；
+
+2. mcp协议：规定的是如何发现和调用函数的； 这套协议脱离大模型也是能够用的； 
+   1. <font color=red>mcp协议本身并没有规定与模型的交互方式； 即没有规定 cline 与 大模型的交互要如何处理</font>； 
+
+
+
+
+
+
 
 
 
