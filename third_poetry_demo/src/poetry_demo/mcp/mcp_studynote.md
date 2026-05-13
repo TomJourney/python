@@ -571,6 +571,26 @@ uv --directory /Users/rong/studynote/workbench/python/third_poetry_demo/src/poet
 2. mcp协议：规定的是如何发现和调用函数的； 这套协议脱离大模型也是能够用的； 
    1. <font color=red>mcp协议本身并没有规定与模型的交互方式； 即没有规定 cline 与 大模型的交互要如何处理</font>； 
 
+3. 实际上不同的mcp host与模型的交互确实是会存在很大差异：
+   1. 比如说cline是用xml与模型沟通； 而 cherrystudio使用 Function Calling的格式与模型沟通；（Function Calling是openai提出的一套协议，用来规定模型是如何调用函数的；）
+
+3. <font color=red>总结： mcp协议本没有规定如何与模型交互； 这一点非常重要；明白这一点，你就明白了mcp协议的本质</font>；
+
+<br>
+
+### 【MCP协议总结】
+
+1.  MCP， 模型上下文协议：上下文就是环境；
+   1. 什么是环境： 环境就是周围有哪些函数可以调用，从而获取到外界信息，比如获取天气信息，网络信息，文件信息等； 
+   2. <font color=red>mcp就是让模型感知外部环境的一个协议，所以它叫做模型上下文协议</font>；
+      1. mcp这个名字有一定误导性，因为它并没有规定与模型交互的规则，而实际情况顶多可以说mcp是给模型服务的；
+
+<br>
+
+---
+
+
+
 
 
 
