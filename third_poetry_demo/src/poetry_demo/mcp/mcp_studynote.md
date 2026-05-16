@@ -92,6 +92,12 @@
 
 <br>
 
+【<font color=red>个人总结的MCPServer与Agent/CLine及LLM的交互时序图</font>】
+
+![Agent_MCPServer_LLM_sequence](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/mcp/img/Agent_MCPServer_LLM_sequence.jpg)
+
+<br>
+
 ### 【1.3.3】如何使用他人制作的MCP Server: uvx部分
 
 1. mcp server市场：mcp.so , mcpmarket.com , smithery.ai 等；
@@ -418,7 +424,7 @@ if __name__ == "__main__":
    3. resource中文是资源， resource_templates 可以理解为动态资源； 
    4. 资源就是一个文件，或一个报告之类的东西； 
 
-【总结】cline到此时摸底就结束了；这一切都发生在我们注册工具的一瞬间； 后面就是要等待合适的时机再使用mcp server 了；
+【总结】<font color=red>cline到此时摸底就结束了；这一切都发生在我们注册工具的一瞬间； 后面就是要等待合适的时机再使用mcp server 了</font>；
 
 <br>
 
@@ -588,20 +594,6 @@ uv --directory /Users/rong/studynote/workbench/python/third_poetry_demo/src/poet
 <br>
 
 ---
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
