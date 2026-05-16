@@ -349,9 +349,31 @@ claude上传文件完成。
 
 <br>
 
+【效果解说】
+
+1. claude code 申请执行这个 upload.py 文件；它并没有去读取这个文件；
+   1. <font color=red>因为，Agent Skill里面的代码只会被执行，不会被读取</font>； 
+   2. 这就意味着，哪怕你的脚步写了一万行复杂的业务逻辑，它消耗的模型上下文几乎是零； 
+   3. Claude code：只关心脚本的运行方法和运行结果；至于这个脚本的内容，它毫不关心； 
+2. <font color=red>结论：虽然reference 与 script都属于Agent Skill的高级功能，但是它们对于模型上下文的影响其实是截然不同的</font>；
+   1. reference是读： 他会把内容加载到上下文里面，所以是会消耗token的；
+   2. script是跑或执行：它只会被执行，不会占用模型的上下文； 
+
+ <br>
+
 ---
 
+## 【2.4】Agent Skill的渐进式披露机制
 
+1. <font color=red>Agent Skill：是一个精密的渐进式披露结构； 该结构一共有三层</font>；
+   1. 第1层：元数据层-metadata； 包含所有的Agent Skill的名称和描述； <font color=red>属于始终加载</font>；
+      1. 相当于大模型里面的目录；大模型每次回答前都会看以下这一层的信息； 然后决定用户的问题是否与某个Agent Skill相匹配；
+   2. 第2层：指令层-instruction；对于SKILL.md文件里面，除了名称和描述之外其余的部分；
+      1. 只有当大模型发现用户的问题，与某个Agent Skill相匹配的时候，它才会去加载这一层的内容； <font color=red>属于按需加载</font>；
+   3. 第3层：资源层-resources；包含 Reference和Script两方面的内容；
+      1. 按照官方最新的规范，应该还有一个组成部分叫做Asset；它与Reference的定义有部分重叠，因此本文暂且忽略它；
+         1. 如：meeting-summary这个技能中的集团财务手册和upload.py 脚本就属于这一层； 
+         2. 只有当模型发现用户问题，
 
 
 
