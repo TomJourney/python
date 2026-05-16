@@ -295,25 +295,167 @@
 # 【8】Agent Skill 
 
 1. 我们现在知道：Agent能够自主规划，调用工具持续工作直到完成任务；听上去很完美，<font color=red>但在实际的高频使用中有如下痛点</font>；
-2. 
+2. 例：假设你希望大模型成为你出门前的小助手，每次出门前都帮你查一下天气，并提醒你带东西；
+   1. 你肯定有一套自己的出门习惯，比如下雨带伞，光照强戴帽子，空气差戴口罩，风大穿防风外套，无论如何，手机必带；
+   2. 不仅如此，你可能还是个强迫症，希望它的回答不要太啰嗦，必须按照特定的格式输出；
+      1. 比如先来一句总结，然后再列出要带的物品清单；
 
+![llm_2_skill_08](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/llm_to_AgentSkills/img/llm_2_skill_08.png)
 
+<br>
 
+3. <font color=red>在没有额外设定的情况下，假定你只问一句：我马上要出门，应该带些什么东西</font>？
+   1. agent虽然会查天气，但它并不知道你的这些私人规则和格式要求；<font color=red>所以大模型大概率会给你一堆废话</font>；
+      1. 大模型无法根据你的出门习惯来判断要带什么？此外，输出格式也无法满足你的要求；
+4. <font color=red>临时解决方案</font>：为了拿到让你满意的结果，你每次提问时都需要带上一大串尾巴，把你的所有规则，格式要求，甚至示例统统塞进prompt里发给大模型； 
+   1. <font color=red>这样带来了其他问题</font>：试想一下， 每次出门都要敲这么一大段要求，是不是很反人类；
+   2. <font color
+   3. <font color=red>别担心，这就是Agent Skill的价值所在</font>；
 
+<br>
 
+## 【8.1】Agent Skill详细介绍 
 
+1. <font color=red>Agent Skill：本质上是你提前写好塞给Agent的一份说明文档</font>；
+   1. 比如，刚才那个出门的场景，我们就可以这样写成一个Agent Skill ；
 
+【go-out-checklist】SKILL.md 文件内容： 
 
+```markdown
+---
+name: go-out-checklist
+description: 生成出门清单。当用户询问“出门要带什么/要准备什么/今天外出需要带哪些东西”时使用。
+---
 
+# 目标
 
+你是一个贴心的“出门清单助手”。你的任务是根据用户所在位置的实时天气情况，告诉用户出门必须携带的物品。
 
+# 执行步骤
 
+1. 调用“定位工具”，获取用户当前所在位置的经纬度。
+2. 将获取到的经纬度作为参数，调用“天气工具”，一次性获取降雨情况、光照强度、空气质量和风力大小这四项数据。
+3. 根据天气数据结果，按照下方的“判断规则”整理出门需要携带的物品。
+4. 严格按照下方的“输出格式”向用户输出最终结果。
 
+# 判断规则
 
+1. 手机：无条件必带。
+2. 伞：当“天气工具”返回“有雨”时，必须携带。
+3. 帽子：当“天气工具”返回“光照强”时，必须携带。
+4. 口罩：当“天气工具”返回“空气质量差”时，必须携带。
+5. 防风外套：当“天气工具”返回“强风”时，必须携带。
 
+# 输出格式
 
+你必须输出两段：
 
+【结论一句话】
+用一句话总结今天出门最关键的注意点（例如“有雨 + 光照强”，或“风力大”）。
 
+【出门清单】
+- 物品（原因）
+- 物品（原因）
+
+# 示例
+
+## 用户问题
+我马上要出门，帮我看看今天需要准备些什么？
+
+## 工具返回
+
+### 定位工具
+
+{
+  "经度": -73.9855, 
+  "纬度": 40.7580
+}
+
+### 天气工具
+{
+  "降雨情况": "有雨", 
+  "光照强度": "弱", 
+  "空气质量": "良", 
+  "风力大小": "强风"
+}
+
+# 最终输出
+
+【结论一句话】  
+有雨 + 强风  
+
+【出门清单】  
+- 手机（必带）  
+- 伞（有雨）  
+- 防风外套（强风）
+```
+
+<br>
+
+---
+
+## 【8.2】Agent Skill实践 
+
+1. 在 ~/.claude/skills 目录新建文件夹，名为 go-out-checklist；
+2. 在go-out-checklist目录中新建 SKILL.md文件，内容如上。 
+3. 启动claude code ;
+
+![llm_2_skill_09](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/llm_to_AgentSkills/img/llm_2_skill_09.png)
+
+<br>
+
+【补充：关于MCP工具】
+
+1. 这个Agent Skill明确要求需要定位和天气这两个工具，我已经提前把它们做成MCP工具，导入到Claude Code里面了；
+2. 在 claude cod中 执行/mcp指令就可以查看mcp server；
+
+<br>
+
+4. 下面，我们输入问题：我要出门了，告诉我需要带什么东西？
+
+---
+
+### 【8.2.1】Agent Skill小结
+
+1. <font color=red>Agent Skill： 就是一个文档；一个给Agent看的说明文档</font>； 
+2. 当然，Agent Skill还有很多高级功能，比如运行代码，引用资源等；它的渐进式披露机制也是一大特色；可以节省很多token；
+   1. 若想深入了解，可以参考《Agent Skills，从使用到原理，马克的技术工作坊》；
+
+<br>
+
+---
+
+# 【9】总结 
+
+| 序号 | AI术语                    | 描述                                                         |
+| ---- | ------------------------- | ------------------------------------------------------------ |
+| 1    | LLM-大模型                | 大模型，它是AI技术的核心；                                   |
+| 2    | Token-词元                | 大模型处理数据的最基本单元；                                 |
+| 3    | Context-上下文            | 大模型每次处理任务时接收到的信息总和；<br>你可以把它看做是大模型的临时记忆体，里面装着历史记录，系统规则，以及当前的输入等；<br> 这些数据的基本单位都是Token；<br> |
+| 4    | Context Window-上下文窗口 | 大模型的Context最多能够存储的Token量；                       |
+| 5    | Prompt-提示词             | 用户或系统当前给大模型下达的鸡腿指令或问题；<br>分为User Prompt和System Prompt两大类；<br>User Prompt：代表用户给模型的输入； <br>System Prompt：则是开发者在后台配置的大模型人设和做事规则； |
+| 6    | Tool-工具                 | Tool是大模型用来感知和影响外部环境的函数；                   |
+| 7    | MCP-模型上下文协议        | 统一了工具接入格式的标准协议；<br>有了MCP后，开发者只需要按照一个标准来做工具就可以了；不需要为每个大模型厂商都做一遍； |
+| 8    | Agent-智能体              | 能够自主规划，自主调用工具，持续运维直到解决用户问题的一个程序； |
+| 9    | Agent Skill-智能体技能    | 给Agent看的说明文档；主要用来规定做事的步骤和规则；          |
+
+<br>
+
+【AI术语截图】
+
+![llm_2_skill_10](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/llm_to_AgentSkills/img/llm_2_skill_10.png)
+
+【】
+
+![llm_2_skill_11](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/llm_to_AgentSkills/img/llm_2_skill_11.png)
+
+<br>
+
+## 【9.1】补充
+
+1. <font color=red>无论是 Claude Code，Codex，Cowork还是OpenClaw，它们本质上都是在这个框架下运作的</font>；
+
+<br>
 
 
 
