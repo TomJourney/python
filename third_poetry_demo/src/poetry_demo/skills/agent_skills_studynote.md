@@ -353,7 +353,7 @@ claude上传文件完成。
 
 1. claude code 申请执行这个 upload.py 文件；它并没有去读取这个文件；
    1. <font color=red>因为，Agent Skill里面的代码只会被执行，不会被读取</font>； 
-   2. 这就意味着，哪怕你的脚步写了一万行复杂的业务逻辑，它消耗的模型上下文几乎是零； 
+   2. 这就意味着，哪怕你的脚本写了一万行复杂的业务逻辑，它消耗的模型上下文几乎是零； 
    3. Claude code：只关心脚本的运行方法和运行结果；至于这个脚本的内容，它毫不关心； 
 2. <font color=red>结论：虽然reference 与 script都属于Agent Skill的高级功能，但是它们对于模型上下文的影响其实是截然不同的</font>；
    1. reference是读： 他会把内容加载到上下文里面，所以是会消耗token的；
