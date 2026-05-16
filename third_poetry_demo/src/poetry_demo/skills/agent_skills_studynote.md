@@ -1,4 +1,4 @@
-@TOC
+[TOC]
 
 # 【README】
 
@@ -106,11 +106,11 @@ description: 该技能用于根据会议录音总结内容
 
 接着随便打开一个文件夹，打开claude code；
 
-![skill_01](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/skills/img/skill_02.png)
+![skill_01](./img/skill_02.png)
 
 <br>
 
-![skill_03](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/skills/img/skill_03.png)
+![skill_03](./img/skill_03.png)
 
 <br>
 
@@ -118,7 +118,7 @@ description: 该技能用于根据会议录音总结内容
 
 ### 【2.1.1.】用户与CluadeCode与大模型交互时序图
 
-![skill_04](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/skills/img/skill_04.png)
+![skill_04](./img/skill_04.png)
 
 <br>
 
@@ -229,19 +229,19 @@ description: 该技能用于根据会议录音总结内容
 
 【补充】claude code响应：
 
-![skill_05](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/skills/img/skill_05.png)
+![skill_05](./img/skill_05.png)
 
 <br>
 
 claude请求读取<font color=red>集团财务手册.md这个reference参考资料</font>。
 
-![skill_06](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/skills/img/skill_06.png)
+![skill_06](./img/skill_06.png)
 
 <br>
 
 【claude生成的会议总结】
 
-![skill_07](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/skills/img/skill_07.png)
+![skill_07](./img/skill_07.png)
 
 ---
 
@@ -335,17 +335,17 @@ python upload.py "会议总结内容"
 
 【补充】claude code 响应如下：
 
-![skill_08](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/skills/img/skill_08.png)
+![skill_08](./img/skill_08.png)
 
 <br>
 
 claude 再次询问是否可以授权它上传文件；
 
-![skill_09](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/skills/img/skill_09.png)
+![skill_09](./img/skill_09.png)
 
 claude上传文件完成。
 
-![skill_10](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/skills/img/skill_10.png)
+![skill_10](./img/skill_10.png)
 
 <br>
 
@@ -383,7 +383,7 @@ claude上传文件完成。
 
 <br>
 
-![skill_12](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/skills/img/skill_12.png)
+![skill_12](./img/skill_12.png)
 
 <br>
 
@@ -395,7 +395,7 @@ claude上传文件完成。
 2. 有同学可能有这种感觉：Agent Skill好像与MCP有点像； 本质上都是让模型去连接和操作外部世界；既然功能重叠，那我们到底应该使用哪一个？
 3. <font color=red>Anthropic官网说明了Agent Skill与MCP的区别</font>：MCP给大模型供给数据（如查询昨天的销售记录），而Skill是教会大模型如何处理这些数据（如会议总结必须要有个议题，汇报文档必须包含具体数据等）；
 
-![skill_11](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/skills/img/skill_11.png)
+![skill_11](./img/skill_11.png)
 
 <br>
 
