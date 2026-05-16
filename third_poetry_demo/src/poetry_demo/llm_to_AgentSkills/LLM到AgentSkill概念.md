@@ -28,7 +28,7 @@
       1. 切分：切分为4个token；
       2. 映射：映射到4个数字，每个数字称为TokenId；
 
-![llm_2_skill_01](/./img/llm_2_skill_01.png)
+![llm_2_skill_01](./img/llm_2_skill_01.png)
 
 <br>
 
@@ -36,7 +36,7 @@
    1. 解码；
    2. 映射；
 
-![llm_2_skill_02](/./img/llm_2_skill_02.png)
+![llm_2_skill_02](./img/llm_2_skill_02.png)
 
 ## 【2.1】token总结
 
@@ -48,7 +48,7 @@
 
 1. 词元化器官网：[https://platform.openai.com/tokenizer](https://platform.openai.com/tokenizer)
 
-![llm_2_skill_03](/./img/llm_2_skill_03.png)
+![llm_2_skill_03](./img/llm_2_skill_03.png)
 
 【总结】
 
@@ -98,7 +98,7 @@
       2. Gemini 3.1 Pro的Context Window是100万； 
       3. Claude Opus 4.6的Context Window是100万； 
 
-![llm_2_skill_04](/./img/llm_2_skill_04.png)
+![llm_2_skill_04](./img/llm_2_skill_04.png)
 
 2. 我们之前说过：1个token大约是1.5个汉字；那么100万个token大概是150万个汉字；那整个哈利波特全集的内容都可以装下；
 
@@ -198,7 +198,7 @@
 
 2. 整体时序图如下:
 
-![llm_2_skill_05](/./img/llm_2_skill_05.png)
+![llm_2_skill_05](./img/llm_2_skill_05.png)
 
 <br>
 
@@ -265,7 +265,7 @@
    2. 显然，要解决这个问题，我们需要多次调用工具；
 3. 从大模型视角来看，整个过程应该是这样的：
 
-![llm_2_skill_06](/./img/llm_2_skill_06.png)
+![llm_2_skill_06](./img/llm_2_skill_06.png)
 
 <br>
 
@@ -286,7 +286,7 @@
 3. 上述Agent产品所使用的Agent构建模式不同，比较经典的有ReAct， Plan And Execute；
    1. 补充：如果你对构建模式比较陌生，甚至根本就没有听说过的话，可以参考《Agent概念，原理与构建模式，马克的技术工作坊》；
 
-![llm_2_skill_07](/./img/llm_2_skill_07.png)
+![llm_2_skill_07](./img/llm_2_skill_07.png)
 
 <br>
 
@@ -300,7 +300,7 @@
    2. 不仅如此，你可能还是个强迫症，希望它的回答不要太啰嗦，必须按照特定的格式输出；
       1. 比如先来一句总结，然后再列出要带的物品清单；
 
-![llm_2_skill_08](/./img/llm_2_skill_08.png)
+![llm_2_skill_08](./img/llm_2_skill_08.png)
 
 <br>
 
@@ -400,7 +400,7 @@ description: 生成出门清单。当用户询问“出门要带什么/要准备
 2. 在go-out-checklist目录中新建 SKILL.md文件，内容如上。 
 3. 启动claude code ;
 
-![llm_2_skill_09](/./img/llm_2_skill_09.png)
+![llm_2_skill_09](./img/llm_2_skill_09.png)
 
 <br>
 
@@ -443,11 +443,11 @@ description: 生成出门清单。当用户询问“出门要带什么/要准备
 
 【AI术语截图】
 
-![llm_2_skill_10](/./img/llm_2_skill_10.png)
+![llm_2_skill_10](./img/llm_2_skill_10.png)
 
 【】
 
-![llm_2_skill_11](/./img/llm_2_skill_11.png)
+![llm_2_skill_11](./img/llm_2_skill_11.png)
 
 <br>
 
