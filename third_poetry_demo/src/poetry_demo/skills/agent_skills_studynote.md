@@ -370,10 +370,22 @@ claude上传文件完成。
       1. 相当于大模型里面的目录；大模型每次回答前都会看以下这一层的信息； 然后决定用户的问题是否与某个Agent Skill相匹配；
    2. 第2层：指令层-instruction；对于SKILL.md文件里面，除了名称和描述之外其余的部分；
       1. 只有当大模型发现用户的问题，与某个Agent Skill相匹配的时候，它才会去加载这一层的内容； <font color=red>属于按需加载</font>；
-   3. 第3层：资源层-resources；包含 Reference和Script两方面的内容；
+   3. 第3层：资源层-resources；包含 Reference和Script两方面的内容；<font color=red>属于按需中的按需加载</font>；
       1. 按照官方最新的规范，应该还有一个组成部分叫做Asset；它与Reference的定义有部分重叠，因此本文暂且忽略它；
          1. 如：meeting-summary这个技能中的集团财务手册和upload.py 脚本就属于这一层； 
-         2. 只有当模型发现用户问题，
+         2. 只有当模型发现用户问题与财务或上传相关的时候，才会去加载这一层的内容； 
+            1. <font color=red>这就相当于是在按需加载的指令层基础上，又做了一次按需加载；所以我们可以称它为按需中的按需加载</font>；
+      2. <font color=red>Reference与Script的加载方式不同</font>：
+         1. Reference：是被读取的；claude code会把对应文件的内容作为上下文送给大模型，以供模型回答时参考；
+         2. Script：是被执行的；claude code根本就不会去看代码的内容，它只关心代码的执行结果 ；
+            1. 当然这也不是铁律；如果你没有把代码的执行方法说清楚，claude code还是有可能去通过看代码，这样的话，就会占用模型的上下文token了；
+            2. 所以：还是请大家写Skill的时候，尽可能把一切都解释清楚； 
+
+<br>
+
+---
+
+
 
 
 
