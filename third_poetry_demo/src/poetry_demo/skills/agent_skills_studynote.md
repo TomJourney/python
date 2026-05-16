@@ -383,17 +383,35 @@ claude上传文件完成。
 
 <br>
 
+![skill_12](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/skills/img/skill_12.png)
+
+<br>
+
 ---
 
+# 【3】Agent Skill与MCP对比 
 
+1. 参见： [https://claude.com/blog/skills-explained](https://claude.com/blog/skills-explained)
+2. 有同学可能有这种感觉：Agent Skill好像与MCP有点像； 本质上都是让模型去连接和操作外部世界；既然功能重叠，那我们到底应该使用哪一个？
+3. <font color=red>Anthropic官网说明了Agent Skill与MCP的区别</font>：MCP给大模型供给数据（如查询昨天的销售记录），而Skill是教会大模型如何处理这些数据（如会议总结必须要有个议题，汇报文档必须包含具体数据等）；
 
+![skill_11](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/skills/img/skill_11.png)
 
+<br>
 
+---
 
+## 【3.1】关于Agent Skill与MCP的不同适用场景
 
+1. 有些同学：可能会问了；不对啊，Agent Skill里面也能写代码；<font color=red>我直接在Agent Skill里面写连接数据的逻辑不就可以了吗； 这样就不需要MCP了；Agent Skill就直接把两个活都给干了</font>； 
+2. 确实，Agent Skill也能连接数据；功能上与MCP有所重叠；<font color=red>但是能干并不代表适合干；这就好像瑞士军刀也能切菜，但没有人会这么干</font>；
+3. <font color=red>MCP本质上是一个独立运行的程序，而Agent Skill本质上是一段说明文档</font>；它们的本质不同，决定了适合的场景也是不同的；
+   1. Agent Skill：更适合跑一些轻量脚本，处理简单的逻辑；<font color=red>在代码执行方面，Agent Skill的安全性和稳定性都不及 MCP </font>；所以大家还是要根据场景选择合适的工具；
+      1. 甚至在很多的场景下，我们需要把Agent Skill 与 MCP结合起来一起使用，以便尽可能地满足我们的需求；
 
+<br>
 
-
+---
 
 
 
