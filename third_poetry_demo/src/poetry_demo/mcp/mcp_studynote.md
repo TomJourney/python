@@ -818,9 +818,257 @@ tom@TomMacbook %1~ %# source .venv/bin/activate
 
 <br>
 
+---
+
+# 【4】解读简单场景下Cline发往模型的请求
+
+1. 日志说明
+
+![MCPHost_LLM_07](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/mcp/img/MCPHost_LLM_07.png)
+
+【日志结果】
+
+```json
+{
+  "model": "deepseek/deepseek-chat-v3-0324",
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are Cline, a highly skilled software engineer with extensive knowledge in many programming languages, ..."
+    },
+    {
+      "role": "user",
+      "content": [
+        {
+          "type": "text",
+          "text": "<task>\n你好\n</task>"
+        },
+        {
+          "type": "text",
+          "text": "\n# task_progress RECOMMENDED\n\nWhen starting a new task, it is recommended to include a todo list using the task_progress parameter.\n\n\n1. Include a todo list using the task_progress parameter in your next tool call\n2. Create a comprehensive checklist of all steps needed\n3. Use markdown format: - [ ] for incomplete, - [x] for complete\n\n**Benefits of creating a todo/task_progress list now:**\n\t- Clear roadmap for implementation\n\t- Progress tracking throughout the task\n\t- Nothing gets forgotten or missed\n\t- Users can see, monitor, and edit the plan\n\n**Example structure:**```\n- [ ] Analyze requirements\n- [ ] Set up necessary files\n- [ ] Implement main functionality\n- [ ] Handle edge cases\n- [ ] Test the implementation\n- [ ] Verify results```\n\nKeeping the task_progress list updated helps track progress and ensures nothing is missed.\n"
+        },
+        {
+          "type": "text",
+          "text": "<environment_details>\n# Visual Studio Code Visible Files\n../Library/Application Support/Code/User/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json\n\n# Visual Studio Code Open Tabs\n../Library/Application Support/Code/User/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json\n\n# Current Time\n2026/5/17 下午8:54:20 (Asia/Shanghai, UTC+8:00)\n\n# Current Working Directory (/Users/rong/Desktop) Files\n(Desktop files not shown automatically. Use list_files to explore if needed.)\n\n# Workspace Configuration\n{\n  \"workspaces\": {\n    \"/Users/rong/Desktop\": {\n      \"hint\": \"Desktop\"\n    }\n  }\n}\n\n# Detected CLI Tools\nThese are some of the tools on the user's machine, and may be useful if needed to accomplish the task: git, npm, curl, jq, make, node, mysql, sqlite3, code, grep, sed, awk, brew, bundle. This list is not exhaustive, and other tools may be available.\n\n# Context Window Usage\n0 / 128K tokens used (0%)\n\n# Current Mode\nACT MODE\n</environment_details>"
+        }
+      ]
+    }
+  ],
+  ...
+}
+```
+
+【代码解说】
+
+1. system： 用于设定系统提示词，它的功能是设定魔心需要提前感知的一些消息；如模型需要扮演的角色，模型可以用的工具列表，模型返回结果的格式等；这些都是cline写的；别看这里面的context只有一行，实际是个长文本；
+2. 系统提示词的content翻译如下：
+
+```markdown
+# mcp_localserver_logger.sql 中文翻译
+
+你是 Cline，一名经验丰富的软件工程师，精通多种编程语言、框架、设计模式以及最佳实践。
+
+## 工具使用（TOOL USE）
+
+你可以访问一组需要用户批准后才能执行的工具。
+
+当多个操作彼此独立时（例如同时读取多个文件、并行搜索），你可以在一次响应中使用多个工具。
+
+对于存在依赖关系的操作（即前一步结果会影响下一步操作），请按顺序依次使用工具。
+
+你会收到所有工具调用的执行结果。
+
+请谨慎使用工具，并确保：
+
+* 在真正需要时才调用工具
+* 工具调用参数准确无误
+* 在继续后续步骤前，正确分析工具返回结果
+
+## 软件工程行为规范
+
+你应该：
+
+* 编写清晰、可维护、符合规范的代码
+* 优先考虑代码可读性
+* 遵循项目既有风格
+* 在必要时添加注释
+* 避免不必要的复杂设计
+* 优先使用成熟稳定的实现方案
+* 注意安全性、性能与可扩展性
+
+## 问题分析
+
+在开始编码前：
+
+1. 先理解需求
+2. 分析现有代码结构
+3. 找出相关文件
+4. 设计合理方案
+5. 再进行修改
+
+## 修改代码时
+
+请尽量：
+
+* 保持改动最小化
+* 避免影响无关逻辑
+* 不要破坏现有功能
+* 保持向后兼容
+* 遵循 DRY 原则（不要重复自己）
+
+## 调试与排查
+
+当遇到 Bug 时：
+
+* 先分析根因
+* 不要盲目修改
+* 利用日志和错误信息定位问题
+* 逐步验证假设
+* 修复后验证结果
+
+## 与用户沟通
+
+你应该：
+
+* 清晰解释你的思路
+* 在必要时说明原因
+* 对不确定内容保持透明
+* 避免编造信息
+* 使用简洁专业的表达
+
+## 文件操作
+
+修改文件前：
+
+* 先读取文件内容
+* 理解上下文
+* 再进行修改
+
+避免：
+
+* 无意义的大规模重构
+* 覆盖用户未要求修改的内容
+* 删除重要逻辑
+
+## 安全规范
+
+不要：
+
+* 泄露敏感信息
+* 输出密钥、Token、密码
+* 引入恶意代码
+* 执行危险操作
+* 删除关键数据
+
+## 最佳实践
+
+始终优先：
+
+* 正确性
+* 可维护性
+* 稳定性
+* 用户体验
+
+而不是：
+
+* 炫技
+* 过度设计
+* 不必要优化
+
+```
+
+3. 提示词中所说的工具与MCP的工具是不同的；<font color=red>提示词提到的工具一共包含两部分内容，包括Cline内置工具，MCP工具</font>：
+   1. Cline内置工具：	
+      1. 如写入文件，替换文件内容，读取文件，运行终端命令；
+   2. MCP工具： 
+      1. 如 天气预告，气象预警；
+4. 所以： 模型是可以用到上述两种工具的；
+
+<br>
+
+## 【4.1】模型是怎么通过XML格式与Cline交互的
+
+1. 例： 用户问题是：src/main.js这个文件写了什么？
+   1. cline会把这个问题发送给模型；
+   2. 模型接到问题后发现它需要先调用 reada_file 这个工具来读取main.js的文件内容； 
+      1. 于是，模型按照system prompt里面给出的xml格式，向cline请求读取这个文件的内容；
+   3. cline接到请求后读取了 main.js的内容，并且返回给了模型； 
+   4. 模型再往后就可以自己总结出答案了；
+   5. <font color=red>总结：只要是模型按照cline规定的这种xml格式返回，cline就可以帮助模型调用各种它想要调用的工具</font>；
+
+![MCPHost_LLM_08](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/mcp/img/MCPHost_LLM_08.jpg)
+
+1. <font color=red>那到底有哪些工具可以使用呢？模型是怎么知道读取文件用的工具名是 read_file呢</font>。 
+   1.  Cline在工具部分会给模型详细解释有哪些工具可以调用； 
+   2. 它也会告诉模型每个工具的名称，参数格式，用途等之类的信息；
+      1. 如 execute_command： 用于执行终端命令； 它的参数一共包含两部分；
+         1. 一个是命令内容； 
+         2. 一个是是否需要用户同意； 
+
+```json
+
+      "type": "function",
+      "function": {
+        "name": "execute_command",
+        "description": "Request to execute a CLI command on the system. Use this when you need to perform system operations or run specific commands to accomplish any step in the user's task.",
+        "strict": false,
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "command": {
+              "type": "string",
+              "description": "The CLI command to execute. This should be valid for the current operating system. Do not use the ~ character or $HOME to refer to the home directory. Always use absolute paths. The command will be executed from the current workspace, you do not need to cd to the workspace."
+            },
+            "requires_approval": {
+              "type": "boolean",
+              "description": "To indicate whether this command requires explicit user approval or interaction before it should be executed. For system/file altering operations like installing/uninstalling packages, removing/overwriting files, system configuration changes, network operations, or any commands that are considered potentially dangerous must be set to true. False for safe operations like running development servers, building projects, and other non-destructive operations."
+            }
+          },
+          "required": [
+            "command",
+            "requires_approval"
+          ],
+          "additionalProperties": false
+        }
+      }
+    },
+```
+
+2. 再后面是其他的工具说明；
+   1. 如 read_file 用于读取文件内容； 
+   2. write_to_file： 用于写入文件内容； 
+   3. replace_in_file： 用于替换文件内容； 
+   4. search_file： 用于搜索文件；
+   5. list_file： 用户列举当前项目目录中的文件列表； 
+   6. list_code_definition_name： 列举指定目录顶层原代码文件中使用到的定义名称，如类，方法等；
+   7. brower_action ：
+   8. <font color=red>重点看 use_mcp_tool</font>：这是用来使用MCP工具的； 它的参数一共分为3个：
+      1. server_name: mcp服务器名称； 
+      2. tool_name: mcp工具的名称（一个MCPServer可以有多个工具方法）；
+      3. arguments： MCP工具的输入参数； 
+
+【例】这个xml，代表模型想要调用weather这个MCPServer下的get_forecast工具；使用工具的参数为latitude，longitude； 
+
+```xml
+<use_mcp_tool>
+<server_name>weather</server_name>
+<tool_name>get_forecast</tool_name>
+<arguments>
+{
+    "latitude": 40.7128,
+    "longitude": -74.006
+}
+</arguments>
+</use_mcp_tool>
+```
 
 
- 
+
+
+
+
+
+
 
 
 
