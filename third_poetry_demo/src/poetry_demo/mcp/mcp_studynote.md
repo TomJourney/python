@@ -618,9 +618,106 @@ uv --directory /Users/rong/studynote/workbench/python/third_poetry_demo/src/poet
 ![MCPHost_LLM_LocalLog](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/mcp/img/MCPHost_LLM_LocalLog.jpg)
 
 3. cline支持连接我们的本地服务器吗？
-   1. <font color=red>Cline的Act Mode中API Provider，选择OpenAI Compatible </font>； 
+   1. <font color=red>Cline的Act Mode中API Provider，选择OpenAI Compatible </font>； 它的意思是对应模型提供商虽然不是OpenAI，但是它的API完全兼容OpenAI的格式；
+      1. 我们选择它之后，把本地服务器地址填到 BaseURL里面；然后再填好 API Key，Model Id等信息；
+      2. 剩下的事情就去编写本地服务器，并且确保本地服务器的输入和输出，符合OpenAI的格式规范； 
+
+![MCPHost_LLM_01](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/mcp/img/MCPHost_LLM_01.png)
+
+<br>
+
+## 【3.2】中转服务器代码解释
+
+1. 本地服务器代码：
+
+【llm_logger.py】
+
+```python
+import httpx
+from fastapi import FastAPI, Request
+from starlette.responses import StreamingResponse
 
 
+class AppLogger:
+    def __init__(self, log_file="llm.log"):
+        """Initialize the logger with a file that will be cleared on startup."""
+        self.log_file = log_file
+        # Clear the log file on startup
+        with open(self.log_file, 'w') as f:
+            f.write("")
+
+    def log(self, message):
+        """Log a message to both file and console."""
+
+        # Log to file
+        with open(self.log_file, 'a') as f:
+            f.write(message + "\n")
+
+        # Log to console
+        print(message)
+
+
+app = FastAPI(title="LLM API Logger")
+logger = AppLogger("llm.log")
+
+
+@app.post("/chat/completions")
+async def proxy_request(request: Request):
+
+    body_bytes = await request.body()
+    body_str = body_bytes.decode('utf-8')
+    logger.log(f"模型请求：{body_str}")
+    body = await request.json()
+
+    logger.log("模型返回：\n")
+
+    async def event_stream():
+        async with httpx.AsyncClient(timeout=None) as client:
+            async with client.stream(
+                    "POST",
+                    "https://openrouter.ai/api/v1/chat/completions",
+                    json=body,
+                    headers={
+                        "Content-Type": "application/json",
+                        "Accept": "text/event-stream",
+                        "Authorization": request.headers.get("Authorization"),
+                    },
+            ) as response:
+                async for line in response.aiter_lines():
+                    logger.log(line)
+                    yield f"{line}\n"
+
+    return StreamingResponse(event_stream(), media_type="text/event-stream")
+
+
+if __name__ == "__main__":
+    import uvicorn
+
+    uvicorn.run(app, host="0.0.0.0", port=8000)
+```
+
+【代码解说】
+
+1. event_stream：事件流；它要处理模型的流式返回结果；
+   1. 对应这里面的 "Accept": "text/event-stream" ；<font color=red>也就是要求模型使用流式返回</font>；
+   2. <font color=red>这个流式返回的专业名称叫做 Server-Sent Events, 简称SSE</font> ；
+
+<br>
+
+### 【3.2.1】SSE-Server Sent Events-服务器发送事件
+
+1. SSE介绍： 一般情况下，我们使用http访问一个网站的时候，我们的浏览器会发送给目标服务器一个请求，目标服务器会返回对应结果，一去一回一次交互就完成了；
+   1. <font color=red>这个交互方式有个缺陷</font>： 它处理不了服务器连续发回多次想要的情况；因为大模型聊天页面返回的结果都是几个字几个字的返回，而只是一去一回的话显然无法做到这种效果；
+2. <font color=red>所以目前主流的大模型聊天页面用的都是SSE</font>；
+   1. 它的特点是： 浏览器只需要请求一次，服务器接收请求后会连续多次发送响应，每次响应的内容都是几个字；
+      1. 而浏览器接收到几个字就显示几个字； 这样用户就可以及时接收到模型的返回；出来几个字就看几个字，体验就会好很多； 
+      2. 等到所有的结果都显示完毕后，服务器会发送一个完成的标识；
+      3. <font color=red>浏览器接收到标识后关闭SSE连接</font>；
+      4. 
+
+
+
+ 
 
 
 
