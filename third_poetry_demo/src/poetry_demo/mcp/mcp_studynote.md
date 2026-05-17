@@ -96,6 +96,8 @@
 
 ![Agent_MCPServer_LLM_sequence](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/mcp/img/Agent_MCPServer_LLM_sequence.jpg)
 
+【补充】Agent(Cline) 也叫做 MCP Host; 
+
 <br>
 
 ### 【1.3.3】如何使用他人制作的MCP Server: uvx部分
