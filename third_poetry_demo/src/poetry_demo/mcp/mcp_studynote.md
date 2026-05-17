@@ -1042,7 +1042,7 @@ tom@TomMacbook %1~ %# source .venv/bin/activate
    5. list_file： 用户列举当前项目目录中的文件列表； 
    6. list_code_definition_name： 列举指定目录顶层原代码文件中使用到的定义名称，如类，方法等；
    7. brower_action ：
-   8. <font color=red>重点看 use_mcp_tool</font>：这是用来使用MCP工具的； 它的参数一共分为3个：
+   8. <font color=red>工具8：重点看 use_mcp_tool</font>：这是用来使用MCP工具的； 它的参数一共分为3个：
       1. server_name: mcp服务器名称； 
       2. tool_name: mcp工具的名称（一个MCPServer可以有多个工具方法）；
       3. arguments： MCP工具的输入参数； 
@@ -1062,7 +1062,15 @@ tom@TomMacbook %1~ %# source .venv/bin/activate
 </use_mcp_tool>
 ```
 
+<br>
 
+9. 工具9： access_mcp_resouce: 用于获取mcp资源； 填写MCP服务器和资源的URL即可； 
+10. 工具10： ask_followup_question：是模型向用户提问的时候，所使用的工具；
+11. 工具11：attemp_completion: 这个工具用于返回最终结论；
+    1. 比如模型调用了一系列工具后，它可能会认为自己已经完成了用户给出的任务，或者已经知道了用户问题的答案；此时，模型就会把最终结论放倒 attemp_completion的result参数里面；
+    2. <font color=red>cline接收到这个XML标签后，就会把result的结论显示出来；  对话到这里就结束了</font>；
+
+【例】工具11实践； 
 
 
 
