@@ -748,11 +748,75 @@ if __name__ == "__main__":
    4. yield "是\n"
    5. yield "24度\n"
    6. yield "(结束标识符)\n"
-2. 
+
+【MCPHost + 本地服务器 + LLM交互图】
+
+![Cline_LocalServer+LLM_sequence](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/mcp/img/Cline_LocalServer+LLM_sequence.jpg)
+
+【图片解说】
+
+1. <font color=red>由于使用了SSE， LLM会连续发送多个消息，但我们对每个消息的处理过程都是一样的，步骤如下</font>；
+   1. 步骤1：LLM会把消息发给本地服务器（中转服务器）； 【箭头4】
+   2. 步骤2：本地服务器写入日志； 【箭头5】
+   3. 步骤3：本地服务器再转发给Cline； 【箭头6】
+2. 如此循环下去，这样当整个对话结束的时候，我们就可以到日志文件里面去找我们所需的内容了；
+3. 日志文件包含2部分内容：
+   1. 模型的请求；
+   2. 模型的返回；
 
 <br>
 
+---
 
+### 【3.2.2】配置中转服务器 
+
+1. 进入到项目目录里：执行python -m venv .venv (新建一个虚拟环境)
+   1. 新建虚拟环境，是为了防止我们后续安装的依赖影响到系统； 
+2. 虚拟环境创建好之后，我们执行 source .venv/bin/activate 
+3. 接着执行 pip install -r requirements.txt  ; 安装相关依赖；
+
+【requirements.txt 】 
+
+```shell
+fastapi==0.109.2
+uvicorn==0.27.1
+httpx==0.26.0
+```
+
+【代码解说】 
+
+- fastapi： 用于定义post接口；
+- uvicorn： 用于运行服务器；
+- httpx：用于向LLM（如OpenRouter）发起http请求；
+
+【命令行执行】
+
+```shell
+tom@TomMacbook %1~ %# python -m venv .venv
+tom@TomMacbook %1~ %# source .venv/bin/activate 
+(.venv) tom@TomMacbook %1~ %# vim requirements.txt
+(.venv) tom@TomMacbook %1~ %# 
+(.venv) tom@TomMacbook %1~ %# pip install -r requirements.txt
+```
+
+4. 安装好依赖后，我们再执行 python llm_logger.py  ；即可启动我们的本地服务器了；
+   1. 可以看出端口是 8000 
+
+![MCPHost_LLM_03](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/mcp/img/MCPHost_LLM_03.png)
+
+5. 然后来到cline页面，配置本地服务器；
+
+![MCPHost_LLM_04](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/mcp/img/MCPHost_LLM_04.png)
+
+【测试】在cline中发送请求给大模型
+
+![MCPHost_LLM_05](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/mcp/img/MCPHost_LLM_05.png)
+
+【查看本地服务器的日志】
+
+![MCPHost_LLM_06](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/mcp/img/MCPHost_LLM_06.png)
+
+<br>
 
 
 
