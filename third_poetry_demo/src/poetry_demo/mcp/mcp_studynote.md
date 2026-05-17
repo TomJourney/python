@@ -712,8 +712,47 @@ if __name__ == "__main__":
    1. 它的特点是： 浏览器只需要请求一次，服务器接收请求后会连续多次发送响应，每次响应的内容都是几个字；
       1. 而浏览器接收到几个字就显示几个字； 这样用户就可以及时接收到模型的返回；出来几个字就看几个字，体验就会好很多； 
       2. 等到所有的结果都显示完毕后，服务器会发送一个完成的标识；
-      3. <font color=red>浏览器接收到标识后关闭SSE连接</font>；
-      4. 
+      3. <font color=red>浏览器接收到标识后关闭SSE连接</font>； 页面显示模型回答完毕整个流程就结束了；
+
+<br>
+
+【llm_logger.py】部分代码解说
+
+```python
+    async def event_stream():
+        async with httpx.AsyncClient(timeout=None) as client:
+            # 请求大模型，把cline的请求转发给llm
+            async with client.stream(
+                    "POST",
+                    "https://openrouter.ai/api/v1/chat/completions",
+                    json=body,
+                    headers={
+                        "Content-Type": "application/json",
+                        "Accept": "text/event-stream",
+                        "Authorization": request.headers.get("Authorization"),
+                    },
+            ) as response:
+                # 每一个line就代表服务器的一次返回；我们把这些返回记录下来；
+                # 这里的yield就会把这个响应再发回给cline；
+                async for line in response.aiter_lines():  
+                    logger.log(line)
+                    yield f"{line}\n"
+```
+
+【补充】
+
+1. 比如模型返回的完整消息是： 纽约明天的温度是24度；<font color=red>那么yield就可能会执行6次</font>，如下： 
+   1. yield "纽约\n"
+   2. yield "明天的\n"
+   3. yield "温度\n"
+   4. yield "是\n"
+   5. yield "24度\n"
+   6. yield "(结束标识符)\n"
+2. 
+
+<br>
+
+
 
 
 
