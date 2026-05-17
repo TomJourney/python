@@ -597,6 +597,31 @@ uv --directory /Users/rong/studynote/workbench/python/third_poetry_demo/src/poet
 
 ---
 
+# 【3】MCP Host如何与大模型沟通
+
+1. MCP只规定了MCP Host 与 MCP Server之间的沟通协议，并没有对模型的输入和输出格式提出要求；因此不同MCP Host就可能用不同的格式与模型沟通；
+   1. 如Cline用XML与模型沟通；
+   2. 本文以Cline为例，演示MCP Host是如何与模型进行沟通的；
+
+![MCPServer_MCPHost_LLM](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/mcp/img/MCPServer_MCPHost_LLM.jpg)
+
+<br>
+
+---
+
+## 【3.1】截获模型输入输出参数的原理
+
+1. 要了解Cline与模型是如何交互的，我们最好能够抓取到Cline发给模型的请求；
+2. <font color=red>实现方法：我们启一个本地服务器作为中间人，无论是cline发送请求给模型，还是模型返回答案给cline，都要先经过这个本地服务器才行</font>；
+   1. 本地服务器在接收到Cline的请求和模型的返回后，会把具体内容写入到一个日志文件中；这样我们查看文件的内容就可以知道Cline与模型说了些什么； 
+
+![MCPHost_LLM_LocalLog](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/mcp/img/MCPHost_LLM_LocalLog.jpg)
+
+3. cline支持连接我们的本地服务器吗？
+   1. <font color=red>Cline的Act Mode中API Provider，选择OpenAI Compatible </font>； 
+
+
+
 
 
 
