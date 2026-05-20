@@ -17,6 +17,7 @@ resolution-markers = [
 members = [
     "third-poetry-demo",
     "weather",
+    "weather2",
 ]
 
 [[package]]
@@ -4735,6 +4736,21 @@ wheels = [
 name = "weather"
 version = "0.1.0"
 source = { virtual = "src/poetry_demo/mcp/advance/weather" }
+dependencies = [
+    { name = "httpx" },
+    { name = "mcp", extra = ["cli"] },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "httpx", specifier = ">=0.28.1" },
+    { name = "mcp", extras = ["cli"], specifier = ">=1.27.0" },
+]
+
+[[package]]
+name = "weather2"
+version = "0.1.0"
+source = { virtual = "src/poetry_demo/mcp/advance/weather/weather2" }
 dependencies = [
     { name = "httpx" },
     { name = "mcp", extra = ["cli"] },

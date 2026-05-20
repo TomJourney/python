@@ -860,7 +860,7 @@ tom@TomMacbook %1~ %# source .venv/bin/activate
 
 【代码解说】
 
-1. system： 用于设定系统提示词，它的功能是设定魔心需要提前感知的一些消息；如模型需要扮演的角色，模型可以用的工具列表，模型返回结果的格式等；这些都是cline写的；别看这里面的context只有一行，实际是个长文本；
+1. system： 用于设定系统提示词，它的功能是设定模型需要提前感知的一些消息；如模型需要扮演的角色，模型可以用的工具列表，模型返回结果的格式等；这些都是cline写的；别看这里面的context只有一行，实际是个长文本；
 2. 系统提示词的content翻译如下：
 
 ```markdown
@@ -1066,11 +1066,17 @@ tom@TomMacbook %1~ %# source .venv/bin/activate
 
 9. 工具9： access_mcp_resouce: 用于获取mcp资源； 填写MCP服务器和资源的URL即可； 
 10. 工具10： ask_followup_question：是模型向用户提问的时候，所使用的工具；
-11. 工具11：attemp_completion: 这个工具用于返回最终结论；
+11. 工具11：attemp_completion:  这个工具用于返回最终结论； 
     1. 比如模型调用了一系列工具后，它可能会认为自己已经完成了用户给出的任务，或者已经知道了用户问题的答案；此时，模型就会把最终结论放倒 attemp_completion的result参数里面；
     2. <font color=red>cline接收到这个XML标签后，就会把result的结论显示出来；  对话到这里就结束了</font>；
 
-【例】工具11实践； 
+### 【例】工具11实践
+
+![MCPHost_LLM_09](/Users/rong/studynote/workbench/python/third_poetry_demo/src/poetry_demo/mcp/img/MCPHost_LLM_09.jpg)
+
+<br>
+
+
 
 
 
